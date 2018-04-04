@@ -1,0 +1,42 @@
+<resources>
+    <string name="app_name">Tour UP</string>
+    <string name="title_activity_tour_up_navigation_bar">TourUPNavigationBar</string>
+
+    <string name="navigation_drawer_open">Open navigation drawer</string>
+    <string name="navigation_drawer_close">Close navigation drawer</string>
+
+    <string name="action_settings">Settings</string>
+    <string name="mainpage">mainpage</string>
+    <string name="m_e_n_u">M E N U</string>
+    <string name="todo">TODO</string>
+    <string name="home_page">Home Page</string>
+    <string name="title_activity_navigation">Navigation</string>
+
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="about_us">About Us</string>
+    <string name="nearby_hotels">Nearby Hotels</string>
+    <string name="tour_campus">Tour Campus</string>
+    <string name="nearby_restaurant">Nearby Restaurant</string>
+    <string name="more">More</string>
+    <string name="contact_us">Contact Us</string>
+    <string name="nav_appname">Android Studio</string>
+    <string name="nav_devemail">android.studio@android.com</string>
+    <string name="tourup_icon">tourup_icon</string>
+    <string name="todo_hotel1">todo_hotel1</string>
+    <string name="search_hotel">Search Hotels</string>
+    <string name="search_res">Search Restaurants</string>
+    <string name="about_us_fragment">About Us</string>
+    <string name="hotel">hotel</string>
+    <string name="upgate_img2">upgate_img2</string>
+    <string name="app_description">Tour UP: Los Banos is a homegrown application aiming to help tourist have an easier navigation around the University of the Philippines Los Banos and for them to make their experience worthwhile.</string>
+    <string name="searchPlace">Search</string>
+    <string name="upgate">upgate</string>
+    <string name="upgate_title">University of the Philippines Los Banos Gate</string>
+    <string name="lorem">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nulla id consequat arcu. Phasellus ac erat sit amet erat porttitor maximus. Sed vel quam nec purus congue gravida at semper enim. Quisque at faucibus lacus, nec sollicitudin lectus.</string>
+    <string name="cpark_img">cpark_img</string>
+    <string name="cpark_title">Carabao Park</string>
+    <string name="academic_monument_img">academic_monument_img</string>
+    <string name="academic_monument_title">UP College of Agriculture Academic Heritage Monument</string>
+    <string name="title_activity_tour_university">Tour University</string>
+
+</resources>
