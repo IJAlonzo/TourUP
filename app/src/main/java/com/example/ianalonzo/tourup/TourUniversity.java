@@ -11,9 +11,11 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
 import android.support.v4.content.ContextCompat;
+import android.util.Log;
 import android.widget.Toast;
 
 import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.GoogleApiAvailability;
 import com.google.android.gms.location.LocationListener;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.location.LocationRequest;
@@ -48,10 +50,32 @@ public class TourUniversity extends FragmentActivity implements OnMapReadyCallba
             checkLocationPermission();
         }
 
+        //Check if Google Play Services Available or not
+        if (!CheckGooglePlayServices()) {
+            Log.d("onCreate", "Finishing test case since Google Play Services are not available");
+            finish();
+        }
+        else {
+            Log.d("onCreate","Google Play Services available.");
+        }
+
         // Obtain the SupportMapFragment and get notified when the map is ready to be used.
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
+    }
+
+    private boolean CheckGooglePlayServices() {
+        GoogleApiAvailability googleAPI = GoogleApiAvailability.getInstance();
+        int result = googleAPI.isGooglePlayServicesAvailable(this);
+        if(result != ConnectionResult.SUCCESS) {
+            if(googleAPI.isUserResolvableError(result)) {
+                googleAPI.getErrorDialog(this, result,
+                        0).show();
+            }
+            return false;
+        }
+        return true;
     }
 
     @Override
