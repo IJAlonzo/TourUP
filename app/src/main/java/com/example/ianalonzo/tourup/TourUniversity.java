@@ -12,6 +12,8 @@ import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
 import android.support.v4.content.ContextCompat;
 import android.util.Log;
+import android.view.View;
+import android.widget.Button;
 import android.widget.Toast;
 
 import com.google.android.gms.common.ConnectionResult;
@@ -34,6 +36,8 @@ public class TourUniversity extends FragmentActivity implements OnMapReadyCallba
         GoogleApiClient.OnConnectionFailedListener,
         LocationListener {
 
+    private int PROXIMITY_RADIUS = 10000;
+    double latitude, longitude;
     private GoogleMap mMap;
     private GoogleApiClient client;
     private LocationRequest locationRequest;
@@ -63,6 +67,43 @@ public class TourUniversity extends FragmentActivity implements OnMapReadyCallba
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
+
+        Button btnRestaurant = (Button) findViewById(R.id.btnRestaurant);
+        btnRestaurant.setOnClickListener(new View.OnClickListener() {
+            String Restaurant = "restaurant";
+            @Override
+            public void onClick(View v) {
+                Log.d("onClick", "Button is Clicked");
+                mMap.clear();
+                String url = getUrl(latitude, longitude, Restaurant);
+                Object[] DataTransfer = new Object[2];
+                DataTransfer[0] = mMap;
+                DataTransfer[1] = url;
+                Log.d("onClick", url);
+                GetNearbyPlacesData getNearbyPlacesData = new GetNearbyPlacesData();
+                getNearbyPlacesData.execute(DataTransfer);
+                Toast.makeText(TourUniversity.this,"Nearby Restaurants", Toast.LENGTH_LONG).show();
+            }
+        });
+
+        Button btnHospital = (Button) findViewById(R.id.btnHospital);
+        btnHospital.setOnClickListener(new View.OnClickListener() {
+            String Hospital = "hospital";
+            @Override
+            public void onClick(View v) {
+                Log.d("onClick", "Button is Clicked");
+                mMap.clear();
+                String url = getUrl(latitude, longitude, Hospital);
+                Object[] DataTransfer = new Object[2];
+                DataTransfer[0] = mMap;
+                DataTransfer[1] = url;
+                Log.d("onClick", url);
+                GetNearbyPlacesData getNearbyPlacesData = new GetNearbyPlacesData();
+                getNearbyPlacesData.execute(DataTransfer);
+                Toast.makeText(TourUniversity.this,"Nearby Hospitals", Toast.LENGTH_LONG).show();
+            }
+        });
+
     }
 
     private boolean CheckGooglePlayServices() {
@@ -178,6 +219,18 @@ public class TourUniversity extends FragmentActivity implements OnMapReadyCallba
         }
 
 
+    }
+
+    private String getUrl(double latitude, double longitude, String nearbyPlace) {
+
+        StringBuilder googlePlacesUrl = new StringBuilder("https://maps.googleapis.com/maps/api/place/nearbysearch/json?");
+        googlePlacesUrl.append("location=" + latitude + "," + longitude);
+        googlePlacesUrl.append("&radius=" + PROXIMITY_RADIUS);
+        googlePlacesUrl.append("&type=" + nearbyPlace);
+        googlePlacesUrl.append("&sensor=true");
+        googlePlacesUrl.append("&key=" + "AIzaSyB3lJTX7x0X-oGGsau3JTFqtP_HdKQG_rY");
+        Log.d("getUrl", googlePlacesUrl.toString());
+        return (googlePlacesUrl.toString());
     }
 
     public boolean checkLocationPermission() {
