@@ -50,6 +50,8 @@ public class TourUniversity extends FragmentActivity implements OnMapReadyCallba
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_tour_university);
 
+        lastLocation = new Location("UPLB");
+
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             checkLocationPermission();
         }
@@ -75,6 +77,8 @@ public class TourUniversity extends FragmentActivity implements OnMapReadyCallba
             public void onClick(View v) {
                 Log.d("onClick", "Button is Clicked");
                 mMap.clear();
+                latitude = lastLocation.getLatitude();
+                longitude = lastLocation.getLongitude();
                 String url = getUrl(latitude, longitude, Restaurant);
                 Object[] DataTransfer = new Object[2];
                 DataTransfer[0] = mMap;
@@ -86,21 +90,23 @@ public class TourUniversity extends FragmentActivity implements OnMapReadyCallba
             }
         });
 
-        Button btnHospital = (Button) findViewById(R.id.btnHospital);
-        btnHospital.setOnClickListener(new View.OnClickListener() {
-            String Hospital = "hospital";
+        Button btnHotel = (Button) findViewById(R.id.btnHotel);
+        btnHotel.setOnClickListener(new View.OnClickListener() {
+            String Hotel = "hotel";
             @Override
             public void onClick(View v) {
                 Log.d("onClick", "Button is Clicked");
                 mMap.clear();
-                String url = getUrl(latitude, longitude, Hospital);
+                latitude = lastLocation.getLatitude();
+                longitude = lastLocation.getLongitude();
+                String url = getUrl(latitude, longitude, Hotel);
                 Object[] DataTransfer = new Object[2];
                 DataTransfer[0] = mMap;
                 DataTransfer[1] = url;
                 Log.d("onClick", url);
                 GetNearbyPlacesData getNearbyPlacesData = new GetNearbyPlacesData();
                 getNearbyPlacesData.execute(DataTransfer);
-                Toast.makeText(TourUniversity.this,"Nearby Hospitals", Toast.LENGTH_LONG).show();
+                Toast.makeText(TourUniversity.this,"Nearby Hotels", Toast.LENGTH_LONG).show();
             }
         });
 
@@ -228,7 +234,7 @@ public class TourUniversity extends FragmentActivity implements OnMapReadyCallba
         googlePlacesUrl.append("&radius=" + PROXIMITY_RADIUS);
         googlePlacesUrl.append("&type=" + nearbyPlace);
         googlePlacesUrl.append("&sensor=true");
-        googlePlacesUrl.append("&key=" + "AIzaSyB3lJTX7x0X-oGGsau3JTFqtP_HdKQG_rY");
+        googlePlacesUrl.append("&key=" + "AIzaSyCwM_MdK7PdouAX8SyfYAO8y0Foz2S9NZU");
         Log.d("getUrl", googlePlacesUrl.toString());
         return (googlePlacesUrl.toString());
     }
