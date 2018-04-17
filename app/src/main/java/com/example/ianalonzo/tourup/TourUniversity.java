@@ -36,7 +36,7 @@ public class TourUniversity extends FragmentActivity implements OnMapReadyCallba
         GoogleApiClient.OnConnectionFailedListener,
         LocationListener {
 
-    private int PROXIMITY_RADIUS = 10000;
+    private int PROXIMITY_RADIUS = 1000;
     double latitude, longitude;
     private GoogleMap mMap;
     private GoogleApiClient client;
@@ -72,14 +72,14 @@ public class TourUniversity extends FragmentActivity implements OnMapReadyCallba
 
         Button btnRestaurant = (Button) findViewById(R.id.btnRestaurant);
         btnRestaurant.setOnClickListener(new View.OnClickListener() {
-            String Restaurant = "restaurant";
+            String Restaurant = "restaurant+near+UPLB";
             @Override
             public void onClick(View v) {
                 Log.d("onClick", "Button is Clicked");
                 mMap.clear();
-                latitude = lastLocation.getLatitude();
-                longitude = lastLocation.getLongitude();
-                String url = getUrl(latitude, longitude, Restaurant);
+                latitude = 14.1648;
+                longitude = 121.2413;
+                String url = getUrl(Restaurant);
                 Object[] DataTransfer = new Object[2];
                 DataTransfer[0] = mMap;
                 DataTransfer[1] = url;
@@ -92,14 +92,14 @@ public class TourUniversity extends FragmentActivity implements OnMapReadyCallba
 
         Button btnHotel = (Button) findViewById(R.id.btnHotel);
         btnHotel.setOnClickListener(new View.OnClickListener() {
-            String Hotel = "hotel";
+            String Hotel = "hotel+near+UPLB";
             @Override
             public void onClick(View v) {
                 Log.d("onClick", "Button is Clicked");
                 mMap.clear();
-                latitude = lastLocation.getLatitude();
-                longitude = lastLocation.getLongitude();
-                String url = getUrl(latitude, longitude, Hotel);
+                latitude = 14.1648;
+                longitude = 121.2413;
+                String url = getUrl(Hotel);
                 Object[] DataTransfer = new Object[2];
                 DataTransfer[0] = mMap;
                 DataTransfer[1] = url;
@@ -227,13 +227,14 @@ public class TourUniversity extends FragmentActivity implements OnMapReadyCallba
 
     }
 
-    private String getUrl(double latitude, double longitude, String nearbyPlace) {
+    private String getUrl(String nearbyPlace) {
 
-        StringBuilder googlePlacesUrl = new StringBuilder("https://maps.googleapis.com/maps/api/place/nearbysearch/json?");
-        googlePlacesUrl.append("location=" + latitude + "," + longitude);
-        googlePlacesUrl.append("&radius=" + PROXIMITY_RADIUS);
-        googlePlacesUrl.append("&type=" + nearbyPlace);
-        googlePlacesUrl.append("&sensor=true");
+        StringBuilder googlePlacesUrl = new StringBuilder("https://maps.googleapis.com/maps/api/place/textsearch/json?");
+        googlePlacesUrl.append("query="+ nearbyPlace);
+        //googlePlacesUrl.append("location=" + latitude + "," + longitude);
+        //googlePlacesUrl.append("&radius=" + PROXIMITY_RADIUS);
+        //googlePlacesUrl.append("&type=" + nearbyPlace);
+        //googlePlacesUrl.append("&sensor=true");
         googlePlacesUrl.append("&key=" + "AIzaSyCwM_MdK7PdouAX8SyfYAO8y0Foz2S9NZU");
         Log.d("getUrl", googlePlacesUrl.toString());
         return (googlePlacesUrl.toString());
