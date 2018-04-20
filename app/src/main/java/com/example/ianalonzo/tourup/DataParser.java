@@ -57,6 +57,7 @@ public class DataParser {
         String latitude = "";
         String longitude = "";
         String reference = "";
+        String photoReference = "-NA-";
 
         Log.d("getPlace", "Entered");
 
@@ -70,6 +71,13 @@ public class DataParser {
             latitude = googlePlaceJson.getJSONObject("geometry").getJSONObject("location").getString("lat");
             longitude = googlePlaceJson.getJSONObject("geometry").getJSONObject("location").getString("lng");
             reference = googlePlaceJson.getString("reference");
+
+            if (!googlePlaceJson.isNull("photos")) {
+                JSONArray photos = googlePlaceJson.getJSONArray("photos");
+                if (photos.length()>0) {
+                    photoReference = ((JSONObject)photos.get(0)).getString("photo_reference");
+                }
+            }
 
             googlePlace = new Place(placeName, address, latitude, longitude, reference, R.drawable.cafe_ella);
 
