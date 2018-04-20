@@ -9,15 +9,16 @@
     tools:context="com.example.ianalonzo.tourup.Navigation"
     tools:showIn="@layout/app_bar_navigation"
     android:orientation="vertical"
-    android:padding="5dp">
+    android:padding="5dp"
+    app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
     <!--this makes the appbar appear-->
-    <!--app:layout_behavior="@string/appbar_scrolling_view_behavior"-->
+    <!---->
     
-    <android.support.v7.widget.RecyclerView
+    <!--<android.support.v7.widget.RecyclerView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:id="@+id/rv"></android.support.v7.widget.RecyclerView>
+        android:id="@+id/rv"></android.support.v7.widget.RecyclerView>-->
 
 
     <!--<ScrollView

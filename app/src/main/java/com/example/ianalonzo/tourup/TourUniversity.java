@@ -31,10 +31,13 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 
+import java.util.HashMap;
+import java.util.List;
+
 public class TourUniversity extends FragmentActivity implements OnMapReadyCallback,
         GoogleApiClient.ConnectionCallbacks,
         GoogleApiClient.OnConnectionFailedListener,
-        LocationListener {
+        LocationListener, GetNearbyPlacesData.ShowNearbyPlaces {
 
     private int PROXIMITY_RADIUS = 1000;
     double latitude, longitude;
@@ -80,12 +83,9 @@ public class TourUniversity extends FragmentActivity implements OnMapReadyCallba
                 latitude = 14.1648;
                 longitude = 121.2413;
                 String url = getUrl(Restaurant);
-                Object[] DataTransfer = new Object[2];
-                DataTransfer[0] = mMap;
-                DataTransfer[1] = url;
                 Log.d("onClick", url);
-                GetNearbyPlacesData getNearbyPlacesData = new GetNearbyPlacesData();
-                getNearbyPlacesData.execute(DataTransfer);
+                GetNearbyPlacesData getNearbyPlacesData = new GetNearbyPlacesData(TourUniversity.this);
+                getNearbyPlacesData.execute(url);
                 Toast.makeText(TourUniversity.this,"Nearby Restaurants", Toast.LENGTH_LONG).show();
             }
         });
@@ -100,12 +100,9 @@ public class TourUniversity extends FragmentActivity implements OnMapReadyCallba
                 latitude = 14.1648;
                 longitude = 121.2413;
                 String url = getUrl(Hotel);
-                Object[] DataTransfer = new Object[2];
-                DataTransfer[0] = mMap;
-                DataTransfer[1] = url;
                 Log.d("onClick", url);
-                GetNearbyPlacesData getNearbyPlacesData = new GetNearbyPlacesData();
-                getNearbyPlacesData.execute(DataTransfer);
+                GetNearbyPlacesData getNearbyPlacesData = new GetNearbyPlacesData(TourUniversity.this);
+                getNearbyPlacesData.execute(url);
                 Toast.makeText(TourUniversity.this,"Nearby Hotels", Toast.LENGTH_LONG).show();
             }
         });
@@ -198,7 +195,7 @@ public class TourUniversity extends FragmentActivity implements OnMapReadyCallba
         MarkerOptions markerOptions = new MarkerOptions();
         markerOptions.position(latLng);
         markerOptions.title("Current Location");
-        markerOptions.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_CYAN));
+        markerOptions.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_AZURE));
 
         currentLocationMarker = mMap.addMarker(markerOptions);
 
@@ -270,6 +267,29 @@ public class TourUniversity extends FragmentActivity implements OnMapReadyCallba
 
     @Override
     public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
+
+    }
+
+    @Override
+    public void showNearbyPlaces(List<Place> someData) {
+
+        for (int i = 0; i < someData.size(); i++) {
+            Log.d("onPostExecute","Entered into showing locations");
+            MarkerOptions markerOptions = new MarkerOptions();
+            Place googlePlace = someData.get(i);
+            double lat = Double.parseDouble(googlePlace.getLat());
+            double lng = Double.parseDouble(googlePlace.getLng());
+            String placeName = googlePlace.getName();
+            String address = googlePlace.getAddress();
+            LatLng latLng = new LatLng(lat, lng);
+            markerOptions.position(latLng);
+            markerOptions.title(placeName + " : " + address);
+            markerOptions.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_AZURE));
+            mMap.addMarker(markerOptions);
+            //move map camera
+            mMap.moveCamera(CameraUpdateFactory.newLatLng(latLng));
+            mMap.animateCamera(CameraUpdateFactory.zoomTo(15));
+        }
 
     }
 }

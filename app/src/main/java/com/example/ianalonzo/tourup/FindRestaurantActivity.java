@@ -9,7 +9,7 @@ import android.util.Log;
 import java.util.ArrayList;
 import java.util.List;
 
-public class FindHotelActivity extends AppCompatActivity implements GetNearbyPlacesData.ShowNearbyPlaces {
+public class FindRestaurantActivity extends AppCompatActivity implements GetNearbyPlacesData.ShowNearbyPlaces {
 
     RecyclerView recyclerView;
     PlaceAdapter adapter;
@@ -17,18 +17,17 @@ public class FindHotelActivity extends AppCompatActivity implements GetNearbyPla
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_find_hotel);
+        setContentView(R.layout.activity_find_restaurant);
 
-        recyclerView = (RecyclerView) findViewById(R.id.rv_hotel);
+        recyclerView = (RecyclerView) findViewById(R.id.rv_restaurant);
         recyclerView.setHasFixedSize(true);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
 
         adapter = new PlaceAdapter(this, new ArrayList<Place>());
         recyclerView.setAdapter(adapter);
 
-        GetNearbyPlacesData getNearbyPlacesData = new GetNearbyPlacesData(FindHotelActivity.this);
-        getNearbyPlacesData.execute(getUrl("hotels+in+UPLB"));
-
+        GetNearbyPlacesData getNearbyPlacesData = new GetNearbyPlacesData(FindRestaurantActivity.this);
+        getNearbyPlacesData.execute(getUrl("restaurants+in+UPLB"));
     }
 
     private String getUrl(String nearbyPlace) {
@@ -46,7 +45,7 @@ public class FindHotelActivity extends AppCompatActivity implements GetNearbyPla
 
     @Override
     public void showNearbyPlaces(List<Place> someData) {
-        Log.d("FindHotelActivity", "HARO " + someData.size());
+        Log.d("FindRestaurantActivity", "HARO " + someData.size());
         adapter.setItems(someData);
     }
 }

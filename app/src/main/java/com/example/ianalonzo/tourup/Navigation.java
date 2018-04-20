@@ -73,7 +73,7 @@ public class Navigation extends AppCompatActivity
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
 
-        touristSpotList = new ArrayList<>();
+        /*touristSpotList = new ArrayList<>();
         recyclerView = (RecyclerView) findViewById(R.id.rv);
         recyclerView.setHasFixedSize(true);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
@@ -111,7 +111,7 @@ public class Navigation extends AppCompatActivity
         );
 
         adapter = new TouristSpotAdapter(this, touristSpotList);
-        recyclerView.setAdapter(adapter);
+        recyclerView.setAdapter(adapter);*/
 
     }
 
@@ -172,6 +172,9 @@ public class Navigation extends AppCompatActivity
             Toast.makeText(this, "Finding nearby hotels", Toast.LENGTH_SHORT).show();
 
         } else if (id == R.id.nav_restaurant) {
+
+            final Intent findRest = new Intent(this, FindRestaurantActivity.class);
+            startActivity(findRest);
 
             Toast.makeText(this, "Finding nearby restaurants", Toast.LENGTH_SHORT).show();
 
