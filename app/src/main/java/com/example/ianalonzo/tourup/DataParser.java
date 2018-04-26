@@ -79,7 +79,12 @@ public class DataParser {
                 }
             }
 
-            googlePlace = new Place(placeName, address, latitude, longitude, reference, R.drawable.cafe_ella);
+            StringBuilder imageUrl = new StringBuilder("https://maps.googleapis.com/maps/api/place/photo?");
+            imageUrl.append("maxwidth=400");
+            imageUrl.append("&photoreference=" + photoReference);
+            imageUrl.append("&key=" + "AIzaSyCwM_MdK7PdouAX8SyfYAO8y0Foz2S9NZU");
+
+            googlePlace = new Place(placeName, address, latitude, longitude, reference, imageUrl.toString());
 
             Log.d("getPlace", "Putting Places");
         } catch (JSONException e) {

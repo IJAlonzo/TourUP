@@ -6,13 +6,14 @@ public class Place {
     String lat;
     String lng;
     String reference;
-    int image;
+    String image;
+
 
     public Place() {
 
     }
 
-    public Place(String name, String address, String lat, String lng, String reference, int image) {
+    public Place(String name, String address, String lat, String lng, String reference, String image) {
         this.name = name;
         this.address = address;
         this.lat = lat;
@@ -21,11 +22,11 @@ public class Place {
         this.image = image;
     }
 
-    public int getImage() {
+    public String getImage() {
         return image;
     }
 
-    public void setImage(int image) {
+    public void setImage(String image) {
         this.image = image;
     }
 
