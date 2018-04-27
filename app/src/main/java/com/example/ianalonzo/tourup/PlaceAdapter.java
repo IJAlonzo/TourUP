@@ -45,20 +45,14 @@ import java.util.List;
  * RecyclerView.ViewHolder
  */
 
-public class PlaceAdapter extends RecyclerView.Adapter<PlaceAdapter.TouristSpotViewHolder> implements OnMapReadyCallback {
+public class PlaceAdapter extends RecyclerView.Adapter<PlaceAdapter.TouristSpotViewHolder> {
 
     private Context mCtx;
     private List<Place> place;
-    private GoogleMap mMap;
 
     public PlaceAdapter(Context mCtx, List<Place> placeList) {
         this.mCtx = mCtx;
         this.place = placeList;
-    }
-
-    @Override
-    public void onMapReady(GoogleMap googleMap) {
-        this.mMap = googleMap;
     }
 
     @Override
