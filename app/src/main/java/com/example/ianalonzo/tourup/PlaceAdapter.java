@@ -78,6 +78,7 @@ public class PlaceAdapter extends RecyclerView.Adapter<PlaceAdapter.TouristSpotV
                 final Intent tourUniversity = new Intent(mCtx, TourUniversity.class);
                 tourUniversity.putExtra("latitude", place1.getLat());
                 tourUniversity.putExtra("longitude", place1.getLng());
+                tourUniversity.putExtra("placeName", place1.getName());
                 mCtx.startActivity(tourUniversity);
             }
         });

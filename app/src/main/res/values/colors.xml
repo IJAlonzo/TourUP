@@ -10,4 +10,5 @@
 
     <color name="colorPrimaryTextDefaultMaterialDark">#FFFFFFFF</color>
     <color name="colorSecondaryTextDefaultMaterialDark">#B3FFFFFF</color>
+    <color name="Burgundy">#800020</color>
 </resources>

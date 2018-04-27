@@ -22,6 +22,7 @@ import com.akexorcist.googledirection.GoogleDirection;
 import com.akexorcist.googledirection.constant.TransportMode;
 import com.akexorcist.googledirection.model.Direction;
 import com.akexorcist.googledirection.model.Route;
+import com.akexorcist.googledirection.model.Step;
 import com.akexorcist.googledirection.util.DirectionConverter;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GoogleApiAvailability;
@@ -38,6 +39,7 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.android.gms.maps.model.PolylineOptions;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -78,45 +80,6 @@ public class TourUniversity extends FragmentActivity implements OnMapReadyCallba
         }
 
         buildGoogleApiClient();
-
-        Button btnShowDirection = (Button) findViewById(R.id.btnDirection);
-        btnShowDirection.setOnClickListener(new View.OnClickListener() {
-
-            @Override
-            public void onClick(View v) {
-                Bundle extras = getIntent().getExtras();
-                Double destinationLat = Double.parseDouble(extras.getString("latitude"));
-                Double destinationLng = Double.parseDouble(extras.getString("longitude"));
-                final LatLng origin = new LatLng(lastLocation.getLatitude(),lastLocation.getLongitude());
-                final LatLng destination = new LatLng(destinationLat, destinationLng);
-                String serverKey = "AIzaSyCwM_MdK7PdouAX8SyfYAO8y0Foz2S9NZU";
-
-                GoogleDirection.withServerKey(serverKey)
-                        .from(origin)
-                        .to(destination)
-                        .transportMode(TransportMode.DRIVING)
-                        .execute(new DirectionCallback() {
-                            @Override
-                            public void onDirectionSuccess(Direction direction, String rawBody) {
-                                // Do something here
-                                if(direction.isOK()) {
-                                    Route route = direction.getRouteList().get(0);
-                                    mMap.addMarker(new MarkerOptions().position(origin).icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_AZURE)));
-                                    mMap.addMarker(new MarkerOptions().position(destination).icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_ROSE)));
-
-                                    ArrayList<LatLng> directionPositionList = route.getLegList().get(0).getDirectionPoint();
-                                    mMap.addPolyline(DirectionConverter.createPolyline(TourUniversity.this, directionPositionList, 5, Color.LTGRAY));
-                                    setCameraWithCoordinationBounds(route);
-                                }
-                            }
-
-                            @Override
-                            public void onDirectionFailure(Throwable t) {
-                                // Do something here
-                            }
-                        });
-            }
-        });
 
     }
 
@@ -191,22 +154,6 @@ public class TourUniversity extends FragmentActivity implements OnMapReadyCallba
 
         lastLocation = location;
 
-        if (currentLocationMarker != null) {
-            currentLocationMarker.remove();
-        }
-
-        LatLng latLng = new LatLng(location.getLatitude(),location.getLongitude());
-
-        MarkerOptions markerOptions = new MarkerOptions();
-        markerOptions.position(latLng);
-        markerOptions.title("Current Location");
-        markerOptions.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_AZURE));
-
-        currentLocationMarker = mMap.addMarker(markerOptions);
-
-        mMap.moveCamera(CameraUpdateFactory.newLatLng(latLng));
-        mMap.animateCamera(CameraUpdateFactory.zoomBy(15));
-
         if (client != null) {
             LocationServices.FusedLocationApi.removeLocationUpdates(client,this);
         }
@@ -233,31 +180,47 @@ public class TourUniversity extends FragmentActivity implements OnMapReadyCallba
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
             mMap.setMyLocationEnabled(true);
 
-            Bundle extras = getIntent().getExtras();
+            if (currentLocationMarker != null) {
+                currentLocationMarker.remove();
+            }
+
+            LatLng latLng = new LatLng(lastLocation.getLatitude(),lastLocation.getLongitude());
+
+            MarkerOptions markerOptions = new MarkerOptions();
+            markerOptions.position(latLng);
+            markerOptions.title("Current Location");
+            markerOptions.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_AZURE));
+
+            currentLocationMarker = mMap.addMarker(markerOptions);
+
+            mMap.moveCamera(CameraUpdateFactory.newLatLng(latLng));
+            mMap.animateCamera(CameraUpdateFactory.zoomBy(15));
+
+            final Bundle extras = getIntent().getExtras();
             Double destinationLat = Double.parseDouble(extras.getString("latitude"));
             Double destinationLng = Double.parseDouble(extras.getString("longitude"));
-            final LatLng origin = new LatLng(lastLocation.getLatitude(),lastLocation.getLongitude());
+            final LatLng origin = latLng;
             final LatLng destination = new LatLng(destinationLat, destinationLng);
             String serverKey = "AIzaSyCwM_MdK7PdouAX8SyfYAO8y0Foz2S9NZU";
 
             GoogleDirection.withServerKey(serverKey)
                     .from(origin)
                     .to(destination)
-                    .transportMode(TransportMode.DRIVING)
                     .execute(new DirectionCallback() {
                         @Override
                         public void onDirectionSuccess(Direction direction, String rawBody) {
-                            Toast.makeText(TourUniversity.this, String.valueOf(origin), Toast.LENGTH_SHORT).show();
+                            Toast.makeText(TourUniversity.this, "Showing direction to " + extras.getString("placeName"), Toast.LENGTH_SHORT).show();
                             // Do something here
                             if(direction.isOK()) {
 
-                                Toast.makeText(TourUniversity.this, "Dito na me hahaha", Toast.LENGTH_SHORT).show();
                                 Route route = direction.getRouteList().get(0);
-                                mMap.addMarker(new MarkerOptions().position(origin));
-                                mMap.addMarker(new MarkerOptions().position(destination));
+                                mMap.addMarker(new MarkerOptions().position(destination).title(extras.getString("placeName")).icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_ROSE)));
 
-                                ArrayList<LatLng> directionPositionList = route.getLegList().get(0).getDirectionPoint();
-                                mMap.addPolyline(DirectionConverter.createPolyline(TourUniversity.this, directionPositionList, 6, Color.CYAN));
+                                List<Step> stepList = direction.getRouteList().get(0).getLegList().get(0).getStepList();
+                                ArrayList<PolylineOptions> polylineOptionList = DirectionConverter.createTransitPolyline(TourUniversity.this, stepList, 6, Color.LTGRAY, 3, Color.MAGENTA);
+                                for (PolylineOptions polylineOptions : polylineOptionList) {
+                                    mMap.addPolyline(polylineOptions);
+                                }
                                 setCameraWithCoordinationBounds(route);
                             }
                         }
