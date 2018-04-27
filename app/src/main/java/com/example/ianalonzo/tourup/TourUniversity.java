@@ -77,44 +77,7 @@ public class TourUniversity extends FragmentActivity implements OnMapReadyCallba
             Log.d("onCreate","Google Play Services available.");
         }
 
-        // Obtain the SupportMapFragment and get notified when the map is ready to be used.
-        SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
-                .findFragmentById(R.id.map);
-        mapFragment.getMapAsync(this);
-
-        Button btnRestaurant = (Button) findViewById(R.id.btnRestaurant);
-        btnRestaurant.setOnClickListener(new View.OnClickListener() {
-            String Restaurant = "restaurant+near+UPLB";
-            @Override
-            public void onClick(View v) {
-                Log.d("onClick", "Button is Clicked");
-                mMap.clear();
-                latitude = 14.1648;
-                longitude = 121.2413;
-                String url = getUrl(Restaurant);
-                Log.d("onClick", url);
-                GetNearbyPlacesData getNearbyPlacesData = new GetNearbyPlacesData(TourUniversity.this);
-                getNearbyPlacesData.execute(url);
-                Toast.makeText(TourUniversity.this,"Nearby Restaurants", Toast.LENGTH_LONG).show();
-            }
-        });
-
-        Button btnHotel = (Button) findViewById(R.id.btnHotel);
-        btnHotel.setOnClickListener(new View.OnClickListener() {
-            String Hotel = "hotel+near+UPLB";
-            @Override
-            public void onClick(View v) {
-                Log.d("onClick", "Button is Clicked");
-                mMap.clear();
-                latitude = 14.1648;
-                longitude = 121.2413;
-                String url = getUrl(Hotel);
-                Log.d("onClick", url);
-                GetNearbyPlacesData getNearbyPlacesData = new GetNearbyPlacesData(TourUniversity.this);
-                getNearbyPlacesData.execute(url);
-                Toast.makeText(TourUniversity.this,"Nearby Hotels", Toast.LENGTH_LONG).show();
-            }
-        });
+        buildGoogleApiClient();
 
         Button btnShowDirection = (Button) findViewById(R.id.btnDirection);
         btnShowDirection.setOnClickListener(new View.OnClickListener() {
@@ -138,11 +101,11 @@ public class TourUniversity extends FragmentActivity implements OnMapReadyCallba
                                 // Do something here
                                 if(direction.isOK()) {
                                     Route route = direction.getRouteList().get(0);
-                                    mMap.addMarker(new MarkerOptions().position(origin));
-                                    mMap.addMarker(new MarkerOptions().position(destination));
+                                    mMap.addMarker(new MarkerOptions().position(origin).icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_AZURE)));
+                                    mMap.addMarker(new MarkerOptions().position(destination).icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_ROSE)));
 
                                     ArrayList<LatLng> directionPositionList = route.getLegList().get(0).getDirectionPoint();
-                                    mMap.addPolyline(DirectionConverter.createPolyline(TourUniversity.this, directionPositionList, 5, Color.DKGRAY));
+                                    mMap.addPolyline(DirectionConverter.createPolyline(TourUniversity.this, directionPositionList, 5, Color.LTGRAY));
                                     setCameraWithCoordinationBounds(route);
                                 }
                             }
@@ -202,6 +165,54 @@ public class TourUniversity extends FragmentActivity implements OnMapReadyCallba
         }
     }
 
+    @Override
+    public void onConnected(@Nullable Bundle bundle) {
+
+        locationRequest = new LocationRequest();
+
+        locationRequest.setInterval(1000);
+        locationRequest.setFastestInterval(1000);
+        locationRequest.setPriority(LocationRequest.PRIORITY_BALANCED_POWER_ACCURACY);
+
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED){
+            LocationServices.FusedLocationApi.requestLocationUpdates(client, locationRequest, this);
+        }
+
+
+    }
+
+    @Override
+    public void onLocationChanged(Location location) {
+
+        // Obtain the SupportMapFragment and get notified when the map is ready to be used.
+        SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
+                .findFragmentById(R.id.map);
+        mapFragment.getMapAsync(this);
+
+        lastLocation = location;
+
+        if (currentLocationMarker != null) {
+            currentLocationMarker.remove();
+        }
+
+        LatLng latLng = new LatLng(location.getLatitude(),location.getLongitude());
+
+        MarkerOptions markerOptions = new MarkerOptions();
+        markerOptions.position(latLng);
+        markerOptions.title("Current Location");
+        markerOptions.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_AZURE));
+
+        currentLocationMarker = mMap.addMarker(markerOptions);
+
+        mMap.moveCamera(CameraUpdateFactory.newLatLng(latLng));
+        mMap.animateCamera(CameraUpdateFactory.zoomBy(15));
+
+        if (client != null) {
+            LocationServices.FusedLocationApi.removeLocationUpdates(client,this);
+        }
+
+    }
+
 
     /**
      * Manipulates the map once available.
@@ -220,7 +231,6 @@ public class TourUniversity extends FragmentActivity implements OnMapReadyCallba
         //mMap.setMapType(GoogleMap.MAP_TYPE_SATELLITE);
 
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
-            buildGoogleApiClient();
             mMap.setMyLocationEnabled(true);
 
             Bundle extras = getIntent().getExtras();
@@ -237,7 +247,7 @@ public class TourUniversity extends FragmentActivity implements OnMapReadyCallba
                     .execute(new DirectionCallback() {
                         @Override
                         public void onDirectionSuccess(Direction direction, String rawBody) {
-                            Toast.makeText(TourUniversity.this, String.valueOf(destination), Toast.LENGTH_SHORT).show();
+                            Toast.makeText(TourUniversity.this, String.valueOf(origin), Toast.LENGTH_SHORT).show();
                             // Do something here
                             if(direction.isOK()) {
 
@@ -270,49 +280,6 @@ public class TourUniversity extends FragmentActivity implements OnMapReadyCallba
         .build();
 
         client.connect();
-    }
-
-    @Override
-    public void onLocationChanged(Location location) {
-
-        lastLocation = location;
-
-        if (currentLocationMarker != null) {
-            currentLocationMarker.remove();
-        }
-
-        LatLng latLng = new LatLng(location.getLatitude(),location.getLongitude());
-
-        MarkerOptions markerOptions = new MarkerOptions();
-        markerOptions.position(latLng);
-        markerOptions.title("Current Location");
-        markerOptions.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_AZURE));
-
-        currentLocationMarker = mMap.addMarker(markerOptions);
-
-        mMap.moveCamera(CameraUpdateFactory.newLatLng(latLng));
-        mMap.animateCamera(CameraUpdateFactory.zoomBy(15));
-
-        if (client != null) {
-            LocationServices.FusedLocationApi.removeLocationUpdates(client,this);
-        }
-
-    }
-
-    @Override
-    public void onConnected(@Nullable Bundle bundle) {
-
-        locationRequest = new LocationRequest();
-
-        locationRequest.setInterval(1000);
-        locationRequest.setFastestInterval(1000);
-        locationRequest.setPriority(LocationRequest.PRIORITY_BALANCED_POWER_ACCURACY);
-
-        if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED){
-            LocationServices.FusedLocationApi.requestLocationUpdates(client, locationRequest, this);
-        }
-
-
     }
 
     private String getUrl(String nearbyPlace) {

@@ -153,13 +153,7 @@ public class Navigation extends AppCompatActivity
         // Handle navigation view item clicks here.
         int id = item.getItemId();
 
-        if (id == R.id.nav_tour) {
-            // Handle the tour campus action
-            final Intent tourUniversity = new Intent(this, TourUniversity.class);
-            startActivity(tourUniversity);
-            Toast.makeText(this, "Tour Campus", Toast.LENGTH_SHORT).show();
-
-        } else if (id == R.id.nav_hotels) {
+        if (id == R.id.nav_hotels) {
             // Handle the nearby hotels action
 
             /*FindHotelFragment findHotelFragment = new FindHotelFragment();

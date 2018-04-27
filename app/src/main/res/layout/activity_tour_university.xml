@@ -19,18 +19,6 @@
         android:orientation="vertical">
 
         <Button
-            android:id="@+id/btnRestaurant"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Nearby Restaurants" />
-
-        <Button
-            android:id="@+id/btnHotel"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Nearby Hotels" />
-
-        <Button
             android:id="@+id/btnDirection"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
