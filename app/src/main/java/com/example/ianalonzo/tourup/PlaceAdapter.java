@@ -5,7 +5,10 @@ package com.example.ianalonzo.tourup;
  */
 
 import android.content.Context;
+import android.content.Intent;
+import android.graphics.Color;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -14,8 +17,27 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.akexorcist.googledirection.DirectionCallback;
+import com.akexorcist.googledirection.GoogleDirection;
+import com.akexorcist.googledirection.constant.TransportMode;
+import com.akexorcist.googledirection.model.Direction;
+import com.akexorcist.googledirection.model.Leg;
+import com.akexorcist.googledirection.model.Route;
+import com.akexorcist.googledirection.util.DirectionConverter;
+import com.google.android.gms.maps.CameraUpdateFactory;
+import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.OnMapReadyCallback;
+import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.LatLngBounds;
+import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.android.gms.maps.model.PolylineOptions;
 import com.squareup.picasso.Picasso;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -23,14 +45,20 @@ import java.util.List;
  * RecyclerView.ViewHolder
  */
 
-public class PlaceAdapter extends RecyclerView.Adapter<PlaceAdapter.TouristSpotViewHolder> {
+public class PlaceAdapter extends RecyclerView.Adapter<PlaceAdapter.TouristSpotViewHolder> implements OnMapReadyCallback {
 
     private Context mCtx;
     private List<Place> place;
+    private GoogleMap mMap;
 
     public PlaceAdapter(Context mCtx, List<Place> placeList) {
         this.mCtx = mCtx;
         this.place = placeList;
+    }
+
+    @Override
+    public void onMapReady(GoogleMap googleMap) {
+        this.mMap = googleMap;
     }
 
     @Override
@@ -41,7 +69,7 @@ public class PlaceAdapter extends RecyclerView.Adapter<PlaceAdapter.TouristSpotV
     }
 
     @Override
-    public void onBindViewHolder(TouristSpotViewHolder holder, int position) {
+    public void onBindViewHolder(TouristSpotViewHolder holder, final int position) {
         //Binds the data
         final Place place1 = place.get(position);
 
@@ -53,7 +81,10 @@ public class PlaceAdapter extends RecyclerView.Adapter<PlaceAdapter.TouristSpotV
         holder.showDirections.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Toast.makeText(mCtx, "You are going to " + place1.getName(), Toast.LENGTH_SHORT).show();
+                final Intent tourUniversity = new Intent(mCtx, TourUniversity.class);
+                tourUniversity.putExtra("latitude", place1.getLat());
+                tourUniversity.putExtra("longitude", place1.getLng());
+                mCtx.startActivity(tourUniversity);
             }
         });
 
