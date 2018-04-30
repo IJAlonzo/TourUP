@@ -51,7 +51,11 @@
         <activity
             android:name=".TourUniversity"
             android:label="@string/title_activity_tour_university" />
-        <activity android:name=".FindRestaurantActivity"></activity>
+        <activity android:name=".FindRestaurantActivity" />
+        <activity
+            android:name=".DirectionsActivity"
+            android:label="@string/title_activity_directions" />
+
     </application>
 
 </manifest>

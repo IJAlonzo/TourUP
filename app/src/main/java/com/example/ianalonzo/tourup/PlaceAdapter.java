@@ -75,11 +75,11 @@ public class PlaceAdapter extends RecyclerView.Adapter<PlaceAdapter.TouristSpotV
         holder.showDirections.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                final Intent tourUniversity = new Intent(mCtx, TourUniversity.class);
-                tourUniversity.putExtra("latitude", place1.getLat());
-                tourUniversity.putExtra("longitude", place1.getLng());
-                tourUniversity.putExtra("placeName", place1.getName());
-                mCtx.startActivity(tourUniversity);
+                final Intent directions = new Intent(mCtx, DirectionsActivity.class);
+                directions.putExtra("latitude", place1.getLat());
+                directions.putExtra("longitude", place1.getLng());
+                directions.putExtra("placeName", place1.getName());
+                mCtx.startActivity(directions);
             }
         });
 

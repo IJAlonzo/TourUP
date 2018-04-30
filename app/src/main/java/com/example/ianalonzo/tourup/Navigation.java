@@ -20,6 +20,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.Window;
 import android.view.WindowManager;
+import android.widget.Button;
 import android.widget.Toast;
 
 import java.util.ArrayList;
@@ -55,14 +56,14 @@ public class Navigation extends AppCompatActivity
         setSupportActionBar(toolbar);
         getSupportActionBar().setTitle(null);
 
-        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
+        /*FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
                         .setAction("Action", null).show();
             }
-        });
+        });*/
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
@@ -73,46 +74,14 @@ public class Navigation extends AppCompatActivity
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
 
-        /*touristSpotList = new ArrayList<>();
-        recyclerView = (RecyclerView) findViewById(R.id.rv);
-        recyclerView.setHasFixedSize(true);
-        recyclerView.setLayoutManager(new LinearLayoutManager(this));
-
-        touristSpotList.add(
-                new TouristSpot(
-                        R.string.upgate_title,
-                        R.string.lorem,
-                        R.drawable.upgate
-                )
-        );
-
-        touristSpotList.add(
-                new TouristSpot(
-                        R.string.cpark_title,
-                        R.string.lorem,
-                        R.drawable.carabaopark
-                )
-        );
-
-        touristSpotList.add(
-                new TouristSpot(
-                        R.string.upgate_title,
-                        R.string.lorem,
-                        R.drawable.upgate
-                )
-        );
-
-        touristSpotList.add(
-                new TouristSpot(
-                        R.string.upgate_title,
-                        R.string.lorem,
-                        R.drawable.upgate
-                )
-        );
-
-        adapter = new TouristSpotAdapter(this, touristSpotList);
-        recyclerView.setAdapter(adapter);*/
-
+        Button btnStartTour = (Button) findViewById(R.id.btnStartTour);
+        btnStartTour.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                final Intent startTour = new Intent(Navigation.this, TourUniversity.class);
+                startActivity(startTour);
+            }
+        });
     }
 
     @Override

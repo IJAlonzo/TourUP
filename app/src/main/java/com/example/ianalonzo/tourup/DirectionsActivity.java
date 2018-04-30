@@ -1,13 +1,9 @@
 package com.example.ianalonzo.tourup;
 
 import android.Manifest;
-import android.app.AlertDialog;
-import android.content.DialogInterface;
-import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.location.Location;
-
 import android.os.Build;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -16,24 +12,18 @@ import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
 import android.support.v4.content.ContextCompat;
 import android.util.Log;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.widget.Button;
-import android.widget.ImageView;
 import android.widget.Toast;
 
 import com.akexorcist.googledirection.DirectionCallback;
 import com.akexorcist.googledirection.GoogleDirection;
-import com.akexorcist.googledirection.constant.TransportMode;
-import com.akexorcist.googledirection.constant.Unit;
 import com.akexorcist.googledirection.model.Direction;
 import com.akexorcist.googledirection.model.Route;
 import com.akexorcist.googledirection.model.Step;
 import com.akexorcist.googledirection.util.DirectionConverter;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GoogleApiAvailability;
-import com.google.android.gms.location.LocationListener;
 import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.location.LocationListener;
 import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.maps.CameraUpdateFactory;
@@ -48,10 +38,9 @@ import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.PolylineOptions;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 
-public class TourUniversity extends FragmentActivity implements OnMapReadyCallback,
+public class DirectionsActivity extends FragmentActivity implements OnMapReadyCallback,
         GoogleApiClient.ConnectionCallbacks,
         GoogleApiClient.OnConnectionFailedListener,
         LocationListener, GetNearbyPlacesData.ShowNearbyPlaces {
@@ -62,12 +51,8 @@ public class TourUniversity extends FragmentActivity implements OnMapReadyCallba
     private GoogleApiClient client;
     private LocationRequest locationRequest;
     private Location lastLocation;
-    private Location dest = new Location("");
     private Marker currentLocationMarker;
     public static final int REQUEST_LOCATION_CODE = 99;
-    private Double destinationLat = 14.1663;
-    private Double destinationLng = 121.2426;
-    volatile boolean stop = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -84,8 +69,9 @@ public class TourUniversity extends FragmentActivity implements OnMapReadyCallba
         if (!CheckGooglePlayServices()) {
             Log.d("onCreate", "Finishing test case since Google Play Services are not available");
             finish();
-        } else {
-            Log.d("onCreate", "Google Play Services available.");
+        }
+        else {
+            Log.d("onCreate","Google Play Services available.");
         }
 
         buildGoogleApiClient();
@@ -103,8 +89,8 @@ public class TourUniversity extends FragmentActivity implements OnMapReadyCallba
     private boolean CheckGooglePlayServices() {
         GoogleApiAvailability googleAPI = GoogleApiAvailability.getInstance();
         int result = googleAPI.isGooglePlayServicesAvailable(this);
-        if (result != ConnectionResult.SUCCESS) {
-            if (googleAPI.isUserResolvableError(result)) {
+        if(result != ConnectionResult.SUCCESS) {
+            if(googleAPI.isUserResolvableError(result)) {
                 googleAPI.getErrorDialog(this, result,
                         0).show();
             }
@@ -115,7 +101,7 @@ public class TourUniversity extends FragmentActivity implements OnMapReadyCallba
 
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-        switch (requestCode) {
+        switch (requestCode){
             case REQUEST_LOCATION_CODE:
                 if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
 
@@ -142,13 +128,14 @@ public class TourUniversity extends FragmentActivity implements OnMapReadyCallba
 
         locationRequest = new LocationRequest();
 
-        locationRequest.setInterval(500);
-        locationRequest.setFastestInterval(500);
+        locationRequest.setInterval(1000);
+        locationRequest.setFastestInterval(1000);
         locationRequest.setPriority(LocationRequest.PRIORITY_BALANCED_POWER_ACCURACY);
 
-        if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED){
             LocationServices.FusedLocationApi.requestLocationUpdates(client, locationRequest, this);
         }
+
 
     }
 
@@ -163,77 +150,10 @@ public class TourUniversity extends FragmentActivity implements OnMapReadyCallba
         lastLocation = location;
 
         if (client != null) {
-            LocationServices.FusedLocationApi.removeLocationUpdates(client, this);
+            LocationServices.FusedLocationApi.removeLocationUpdates(client,this);
         }
+
     }
-        /*dest.setLatitude(destinationLat);
-        dest.setLongitude(destinationLng);
-        String distance = String.valueOf(lastLocation.distanceTo(dest));
-        Toast.makeText(this, "Distance: " + distance, Toast.LENGTH_SHORT).show();
-        */
-
-        /*Thread t = new Thread() {
-            @Override
-            public void run() {
-                try {
-                    while (!stop) {
-                        Thread.sleep(5000);
-                        runOnUiThread(new Runnable() {
-                            @Override
-                            public void run() {
-
-                                Location loc = lastLocation;
-
-                                String distance = String.valueOf(loc.distanceTo(dest));
-                                Toast.makeText(TourUniversity.this, "Distance: " + distance, Toast.LENGTH_SHORT).show();
-                            }
-                        });
-
-                    }
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
-            }
-        };
-
-        t.start();*/
-
-            //if (lastLocation.distanceTo(dest) >= 300) {
-
-
-
-                //for Custom Dialog Box
-                /*LayoutInflater layoutInflaterDialogBox = LayoutInflater.from(getApplicationContext());
-                View view = layoutInflaterDialogBox.inflate(R.layout.custom_dialog, null, false);
-                final android.support.v7.app.AlertDialog.Builder alertDialogBuilder = new android.support.v7.app.AlertDialog.Builder(TourUniversity.this);
-                alertDialogBuilder.setView(view);
-
-                final ImageView imageDialog = (ImageView) view.findViewById(R.id.image_dialog);
-                imageDialog.setBackgroundResource(R.drawable.academic_monument);
-
-                alertDialogBuilder
-                        .setCancelable(false)
-                        .setPositiveButton("Go to the next location", new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialogInterface, int i) {
-                                //Do something
-                            }
-                        })
-
-                        .setNegativeButton("Learn more", new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialogInterface, int i) {
-                                //Do something
-                            }
-                        });
-
-
-                final android.support.v7.app.AlertDialog alertDialog = alertDialogBuilder.create();
-                alertDialog.show();
-
-            }*
-
-
 
 
     /**
@@ -271,9 +191,9 @@ public class TourUniversity extends FragmentActivity implements OnMapReadyCallba
             mMap.moveCamera(CameraUpdateFactory.newLatLng(latLng));
             mMap.animateCamera(CameraUpdateFactory.zoomBy(15));
 
-            //Gets data from intent
-            //Bundle extras = getIntent().getExtras();
-
+            final Bundle extras = getIntent().getExtras();
+            Double destinationLat = Double.parseDouble(extras.getString("latitude"));
+            Double destinationLng = Double.parseDouble(extras.getString("longitude"));
             final LatLng origin = latLng;
             final LatLng destination = new LatLng(destinationLat, destinationLng);
             String serverKey = "AIzaSyCwM_MdK7PdouAX8SyfYAO8y0Foz2S9NZU";
@@ -281,20 +201,18 @@ public class TourUniversity extends FragmentActivity implements OnMapReadyCallba
             GoogleDirection.withServerKey(serverKey)
                     .from(origin)
                     .to(destination)
-                    .unit(Unit.METRIC)
-                    .transportMode(TransportMode.WALKING)
                     .execute(new DirectionCallback() {
                         @Override
                         public void onDirectionSuccess(Direction direction, String rawBody) {
-                            Toast.makeText(TourUniversity.this, "Showing direction to Academic Heritage Tower", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(DirectionsActivity.this, "Showing direction to " + extras.getString("placeName"), Toast.LENGTH_SHORT).show();
                             // Do something here
                             if(direction.isOK()) {
 
                                 Route route = direction.getRouteList().get(0);
-                                mMap.addMarker(new MarkerOptions().position(destination).icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_ROSE)));
+                                mMap.addMarker(new MarkerOptions().position(destination).title(extras.getString("placeName")).icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_ROSE)));
 
                                 List<Step> stepList = direction.getRouteList().get(0).getLegList().get(0).getStepList();
-                                ArrayList<PolylineOptions> polylineOptionList = DirectionConverter.createTransitPolyline(TourUniversity.this, stepList, 10, Color.LTGRAY, 3, Color.MAGENTA);
+                                ArrayList<PolylineOptions> polylineOptionList = DirectionConverter.createTransitPolyline(DirectionsActivity.this, stepList, 6, Color.LTGRAY, 3, Color.MAGENTA);
                                 for (PolylineOptions polylineOptions : polylineOptionList) {
                                     mMap.addPolyline(polylineOptions);
                                 }
@@ -314,10 +232,10 @@ public class TourUniversity extends FragmentActivity implements OnMapReadyCallba
     protected synchronized void buildGoogleApiClient() {
 
         client = new GoogleApiClient.Builder(this)
-        .addConnectionCallbacks(this)
-        .addOnConnectionFailedListener(this)
-        .addApi(LocationServices.API)
-        .build();
+                .addConnectionCallbacks(this)
+                .addOnConnectionFailedListener(this)
+                .addApi(LocationServices.API)
+                .build();
 
         client.connect();
     }
@@ -389,11 +307,5 @@ public class TourUniversity extends FragmentActivity implements OnMapReadyCallba
             mMap.animateCamera(CameraUpdateFactory.zoomTo(15));
         }
 
-    }
-
-    @Override
-    public void onDestroy() {
-        stop = true;
-        super.onDestroy();
     }
 }
