@@ -46,6 +46,11 @@ import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.PolylineOptions;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -65,16 +70,27 @@ public class TourUniversity extends FragmentActivity implements OnMapReadyCallba
     private Location dest = new Location("");
     private Marker currentLocationMarker;
     public static final int REQUEST_LOCATION_CODE = 99;
-    private Double destinationLat = 14.1663;
-    private Double destinationLng = 121.2426;
     volatile boolean stop = false;
+
+    //Database References
+    private DatabaseReference databaseReference;
+    private DatabaseReference landMarkReference;
+    private DatabaseReference latitudeReference;
+    private DatabaseReference longitudeReference;
+    private DatabaseReference nextReference;
+    private DatabaseReference nextLocDatabaseReference;
+    private DatabaseReference nextLocNameDatabaseReference;
+
+    private double destinationLat;
+    private double destinationLng;
+    private String landmarkName;
+    private String next;
+    private String nextLocName;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_tour_university);
-
-        lastLocation = new Location("UPLB");
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             checkLocationPermission();
@@ -89,6 +105,43 @@ public class TourUniversity extends FragmentActivity implements OnMapReadyCallba
         }
 
         buildGoogleApiClient();
+
+            /*//Instantiate databases
+            databaseReference = FirebaseDatabase.getInstance().getReference().child("lnd_1");
+            landMarkReference = databaseReference.child("Name");
+            landMarkReference.addValueEventListener(new ValueEventListener() {
+                @Override
+                public void onDataChange(DataSnapshot dataSnapshot) {
+                    landmarkName = dataSnapshot.getValue().toString();
+                }
+
+                @Override
+                public void onCancelled(DatabaseError databaseError) {
+
+                }
+            });
+
+            nextReference = databaseReference.child("Next");
+            nextReference.addValueEventListener(new ValueEventListener() {
+                @Override
+                public void onDataChange(DataSnapshot dataSnapshot) {
+                    next = dataSnapshot.getValue().toString();
+                }
+
+                @Override
+                public void onCancelled(DatabaseError databaseError) {
+
+                }
+            });*/
+
+        Bundle extras = getIntent().getExtras();
+        landmarkName = extras.getString("Name");
+        destinationLat = extras.getDouble("Latitude");
+        destinationLng = extras.getDouble("Longitude");
+        next = extras.getString("Next Location");
+        dest.setLatitude(destinationLat);
+        dest.setLongitude(destinationLng);
+
 
     }
 
@@ -132,8 +185,6 @@ public class TourUniversity extends FragmentActivity implements OnMapReadyCallba
                     //Permission is denied
                     Toast.makeText(this, "Permission Denied", Toast.LENGTH_LONG).show();
                 }
-
-                return;
         }
     }
 
@@ -142,8 +193,8 @@ public class TourUniversity extends FragmentActivity implements OnMapReadyCallba
 
         locationRequest = new LocationRequest();
 
-        locationRequest.setInterval(500);
-        locationRequest.setFastestInterval(500);
+        locationRequest.setInterval(5000);
+        locationRequest.setFastestInterval(1000);
         locationRequest.setPriority(LocationRequest.PRIORITY_BALANCED_POWER_ACCURACY);
 
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
@@ -155,88 +206,78 @@ public class TourUniversity extends FragmentActivity implements OnMapReadyCallba
     @Override
     public void onLocationChanged(Location location) {
 
-        // Obtain the SupportMapFragment and get notified when the map is ready to be used.
-        SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
-                .findFragmentById(R.id.map);
-        mapFragment.getMapAsync(this);
+        if (mMap == null) {
+            // Obtain the SupportMapFragment and get notified when the map is ready to be used.
+            SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
+                    .findFragmentById(R.id.map);
+            mapFragment.getMapAsync(this);
+        }
 
         lastLocation = location;
 
         if (client != null) {
-            LocationServices.FusedLocationApi.removeLocationUpdates(client, this);
+
+            isInDestination(dest);
+
         }
     }
-        /*dest.setLatitude(destinationLat);
-        dest.setLongitude(destinationLng);
+
+    public void isInDestination(Location dest) {
+
         String distance = String.valueOf(lastLocation.distanceTo(dest));
-        Toast.makeText(this, "Distance: " + distance, Toast.LENGTH_SHORT).show();
-        */
+        Toast.makeText(this, "You are " + distance + " meters away from " + landmarkName, Toast.LENGTH_SHORT).show();
 
-        /*Thread t = new Thread() {
+        nextLocDatabaseReference = FirebaseDatabase.getInstance().getReference().child(next);
+        nextLocNameDatabaseReference = nextLocDatabaseReference.child("Name");
+        nextLocNameDatabaseReference.addValueEventListener(new ValueEventListener() {
             @Override
-            public void run() {
-                try {
-                    while (!stop) {
-                        Thread.sleep(5000);
-                        runOnUiThread(new Runnable() {
-                            @Override
-                            public void run() {
-
-                                Location loc = lastLocation;
-
-                                String distance = String.valueOf(loc.distanceTo(dest));
-                                Toast.makeText(TourUniversity.this, "Distance: " + distance, Toast.LENGTH_SHORT).show();
-                            }
-                        });
-
-                    }
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                nextLocName = dataSnapshot.getValue().toString();
             }
-        };
 
-        t.start();*/
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
 
-            //if (lastLocation.distanceTo(dest) >= 300) {
+            }
+        });
 
+        if(lastLocation.distanceTo(dest) <= 70) {
 
+            //for Custom Dialog Box
+            LayoutInflater layoutInflaterDialogBox = LayoutInflater.from(getApplicationContext());
+            View view = layoutInflaterDialogBox.inflate(R.layout.custom_dialog, null, false);
+            final android.support.v7.app.AlertDialog.Builder alertDialogBuilder = new android.support.v7.app.AlertDialog.Builder(TourUniversity.this);
+            alertDialogBuilder.setView(view);
 
-                //for Custom Dialog Box
-                /*LayoutInflater layoutInflaterDialogBox = LayoutInflater.from(getApplicationContext());
-                View view = layoutInflaterDialogBox.inflate(R.layout.custom_dialog, null, false);
-                final android.support.v7.app.AlertDialog.Builder alertDialogBuilder = new android.support.v7.app.AlertDialog.Builder(TourUniversity.this);
-                alertDialogBuilder.setView(view);
+            final ImageView imageDialog = (ImageView) view.findViewById(R.id.image_dialog);
+            imageDialog.setBackgroundResource(R.drawable.academic_monument);
 
-                final ImageView imageDialog = (ImageView) view.findViewById(R.id.image_dialog);
-                imageDialog.setBackgroundResource(R.drawable.academic_monument);
+            alertDialogBuilder
+                    .setCancelable(false)
+                    .setPositiveButton("Go to the next location", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialogInterface, int i) {
+                            //Do something
+                            Toast.makeText(TourUniversity.this, "Next location is " + nextLocName, Toast.LENGTH_SHORT).show();
+                        }
+                    })
 
-                alertDialogBuilder
-                        .setCancelable(false)
-                        .setPositiveButton("Go to the next location", new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialogInterface, int i) {
-                                //Do something
-                            }
-                        })
-
-                        .setNegativeButton("Learn more", new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialogInterface, int i) {
-                                //Do something
-                            }
-                        });
-
-
-                final android.support.v7.app.AlertDialog alertDialog = alertDialogBuilder.create();
-                alertDialog.show();
-
-            }*
+                    .setNegativeButton("Learn more", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialogInterface, int i) {
+                            //Do something
+                        }
+                    });
 
 
+            final android.support.v7.app.AlertDialog alertDialog = alertDialogBuilder.create();
+            alertDialog.show();
 
+            LocationServices.FusedLocationApi.removeLocationUpdates(client, this);
 
-    /**
+        }
+    }
+     /**
      * Manipulates the map once available.
      * This callback is triggered when the map is ready to be used.
      * This is where we can add markers or lines, add listeners or move the camera. In this case,
@@ -259,22 +300,18 @@ public class TourUniversity extends FragmentActivity implements OnMapReadyCallba
                 currentLocationMarker.remove();
             }
 
-            LatLng latLng = new LatLng(lastLocation.getLatitude(),lastLocation.getLongitude());
+            LatLng origin = new LatLng(lastLocation.getLatitude(),lastLocation.getLongitude());
 
             MarkerOptions markerOptions = new MarkerOptions();
-            markerOptions.position(latLng);
+            markerOptions.position(origin);
             markerOptions.title("Current Location");
             markerOptions.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_AZURE));
 
             currentLocationMarker = mMap.addMarker(markerOptions);
 
-            mMap.moveCamera(CameraUpdateFactory.newLatLng(latLng));
+            mMap.moveCamera(CameraUpdateFactory.newLatLng(origin));
             mMap.animateCamera(CameraUpdateFactory.zoomBy(15));
 
-            //Gets data from intent
-            //Bundle extras = getIntent().getExtras();
-
-            final LatLng origin = latLng;
             final LatLng destination = new LatLng(destinationLat, destinationLng);
             String serverKey = "AIzaSyCwM_MdK7PdouAX8SyfYAO8y0Foz2S9NZU";
 
@@ -286,7 +323,7 @@ public class TourUniversity extends FragmentActivity implements OnMapReadyCallba
                     .execute(new DirectionCallback() {
                         @Override
                         public void onDirectionSuccess(Direction direction, String rawBody) {
-                            Toast.makeText(TourUniversity.this, "Showing direction to Academic Heritage Tower", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(TourUniversity.this, "Showing direction to " + landmarkName, Toast.LENGTH_SHORT).show();
                             // Do something here
                             if(direction.isOK()) {
 
@@ -307,6 +344,8 @@ public class TourUniversity extends FragmentActivity implements OnMapReadyCallba
                             // Do something here
                         }
                     });
+
+            //LocationServices.FusedLocationApi.removeLocationUpdates(client, this);
         }
 
     }
@@ -393,6 +432,7 @@ public class TourUniversity extends FragmentActivity implements OnMapReadyCallba
 
     @Override
     public void onDestroy() {
+        LocationServices.FusedLocationApi.removeLocationUpdates(client, this);
         stop = true;
         super.onDestroy();
     }

@@ -23,6 +23,12 @@ import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.Toast;
 
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -34,6 +40,16 @@ public class Navigation extends AppCompatActivity
     TouristSpotAdapter adapter;
 
     List<TouristSpot> touristSpotList;
+
+    private DatabaseReference databaseReference;
+    private DatabaseReference landMarkReference;
+    private DatabaseReference latitudeReference;
+    private DatabaseReference longitudeReference;
+    private DatabaseReference nextReference;
+    String landmarkName = "";
+    double lat = 0.0;
+    double lng = 0.0;
+    String next = "";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -74,14 +90,74 @@ public class Navigation extends AppCompatActivity
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
 
+        //Instance of the database
+        databaseReference = FirebaseDatabase.getInstance().getReference().child("lnd_4");
+        landMarkReference = databaseReference.child("Name");
+        landMarkReference.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                landmarkName = dataSnapshot.getValue().toString();
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
+
+        latitudeReference = databaseReference.child("Latitude");
+        latitudeReference.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                lat = (Double) dataSnapshot.getValue();
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
+
+        longitudeReference = databaseReference.child("Longitude");
+        longitudeReference.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                lng = (Double) dataSnapshot.getValue();
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
+
+        nextReference = databaseReference.child("Next");
+        nextReference.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                next = dataSnapshot.getValue().toString();
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
+
         Button btnStartTour = (Button) findViewById(R.id.btnStartTour);
         btnStartTour.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 final Intent startTour = new Intent(Navigation.this, TourUniversity.class);
+                startTour.putExtra("Name", landmarkName);
+                startTour.putExtra("Latitude", lat);
+                startTour.putExtra("Longitude", lng);
+                startTour.putExtra("Next Location", next);
                 startActivity(startTour);
+                //Toast.makeText(Navigation.this, String.valueOf(lat) + "," + String.valueOf(lng), Toast.LENGTH_SHORT).show();
             }
         });
+
     }
 
     @Override

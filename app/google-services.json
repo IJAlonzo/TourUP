@@ -1,0 +1,42 @@
+{
+  "project_info": {
+    "project_number": "616817288535",
+    "firebase_url": "https://tour-up-1518010645708.firebaseio.com",
+    "project_id": "tour-up-1518010645708",
+    "storage_bucket": "tour-up-1518010645708.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:616817288535:android:747c38bd9f1489cd",
+        "android_client_info": {
+          "package_name": "com.example.ianalonzo.tourup"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "616817288535-c1pougluotkfppf7ujmcui4blpjc4b0b.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCSQakZf6E_r3FGuvZK690_xQX3ACWaaQw"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 1,
+          "other_platform_oauth_client": []
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
