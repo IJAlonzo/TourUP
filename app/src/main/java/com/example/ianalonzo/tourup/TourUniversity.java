@@ -92,6 +92,8 @@ public class TourUniversity extends FragmentActivity implements OnMapReadyCallba
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_tour_university);
 
+        initializeFromDatabase();
+
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             checkLocationPermission();
         }
@@ -105,43 +107,6 @@ public class TourUniversity extends FragmentActivity implements OnMapReadyCallba
         }
 
         buildGoogleApiClient();
-
-            /*//Instantiate databases
-            databaseReference = FirebaseDatabase.getInstance().getReference().child("lnd_1");
-            landMarkReference = databaseReference.child("Name");
-            landMarkReference.addValueEventListener(new ValueEventListener() {
-                @Override
-                public void onDataChange(DataSnapshot dataSnapshot) {
-                    landmarkName = dataSnapshot.getValue().toString();
-                }
-
-                @Override
-                public void onCancelled(DatabaseError databaseError) {
-
-                }
-            });
-
-            nextReference = databaseReference.child("Next");
-            nextReference.addValueEventListener(new ValueEventListener() {
-                @Override
-                public void onDataChange(DataSnapshot dataSnapshot) {
-                    next = dataSnapshot.getValue().toString();
-                }
-
-                @Override
-                public void onCancelled(DatabaseError databaseError) {
-
-                }
-            });*/
-
-        Bundle extras = getIntent().getExtras();
-        landmarkName = extras.getString("Name");
-        destinationLat = extras.getDouble("Latitude");
-        destinationLng = extras.getDouble("Longitude");
-        next = extras.getString("Next Location");
-        dest.setLatitude(destinationLat);
-        dest.setLongitude(destinationLng);
-
 
     }
 
@@ -206,6 +171,9 @@ public class TourUniversity extends FragmentActivity implements OnMapReadyCallba
     @Override
     public void onLocationChanged(Location location) {
 
+        dest.setLatitude(destinationLat);
+        dest.setLongitude(destinationLng);
+
         if (mMap == null) {
             // Obtain the SupportMapFragment and get notified when the map is ready to be used.
             SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
@@ -227,6 +195,7 @@ public class TourUniversity extends FragmentActivity implements OnMapReadyCallba
         String distance = String.valueOf(lastLocation.distanceTo(dest));
         Toast.makeText(this, "You are " + distance + " meters away from " + landmarkName, Toast.LENGTH_SHORT).show();
 
+        //A database referencing to the next location
         nextLocDatabaseReference = FirebaseDatabase.getInstance().getReference().child(next);
         nextLocNameDatabaseReference = nextLocDatabaseReference.child("Name");
         nextLocNameDatabaseReference.addValueEventListener(new ValueEventListener() {
@@ -258,6 +227,7 @@ public class TourUniversity extends FragmentActivity implements OnMapReadyCallba
                         @Override
                         public void onClick(DialogInterface dialogInterface, int i) {
                             //Do something
+                            getNextLocation(next);
                             Toast.makeText(TourUniversity.this, "Next location is " + nextLocName, Toast.LENGTH_SHORT).show();
                         }
                     })
@@ -393,6 +363,118 @@ public class TourUniversity extends FragmentActivity implements OnMapReadyCallba
 
         }
 
+    }
+
+    public void initializeFromDatabase() {
+        //Instance of the database
+        databaseReference = FirebaseDatabase.getInstance().getReference().child("lnd_1");
+        landMarkReference = databaseReference.child("Name");
+        landMarkReference.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                landmarkName = dataSnapshot.getValue().toString();
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
+
+        latitudeReference = databaseReference.child("Latitude");
+        latitudeReference.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                destinationLat = (Double) dataSnapshot.getValue();
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
+
+        longitudeReference = databaseReference.child("Longitude");
+        longitudeReference.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                destinationLng = (Double) dataSnapshot.getValue();
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
+
+        nextReference = databaseReference.child("Next");
+        nextReference.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                next = dataSnapshot.getValue().toString();
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
+    }
+
+    public void getNextLocation(String nextLocation) {
+        //Instance of the database
+        databaseReference = FirebaseDatabase.getInstance().getReference().child(nextLocation);
+        landMarkReference = databaseReference.child("Name");
+        landMarkReference.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                landmarkName = dataSnapshot.getValue().toString();
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
+
+        latitudeReference = databaseReference.child("Latitude");
+        latitudeReference.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                destinationLat = (Double) dataSnapshot.getValue();
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
+
+        longitudeReference = databaseReference.child("Longitude");
+        longitudeReference.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                destinationLng = (Double) dataSnapshot.getValue();
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
+
+        nextReference = databaseReference.child("Next");
+        nextReference.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                next = dataSnapshot.getValue().toString();
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
     }
 
 
