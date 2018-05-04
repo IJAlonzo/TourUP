@@ -154,7 +154,6 @@ public class Navigation extends AppCompatActivity
                 startTour.putExtra("Longitude", lng);
                 startTour.putExtra("Next Location", next);
                 startActivity(startTour);
-                //Toast.makeText(Navigation.this, String.valueOf(lat) + "," + String.valueOf(lng), Toast.LENGTH_SHORT).show();
             }
         });
 

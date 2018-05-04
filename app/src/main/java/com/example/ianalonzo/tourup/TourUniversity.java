@@ -5,6 +5,9 @@ import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.content.res.AssetManager;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.location.Location;
 
@@ -20,6 +23,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.akexorcist.googledirection.DirectionCallback;
@@ -52,6 +56,8 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -77,15 +83,25 @@ public class TourUniversity extends FragmentActivity implements OnMapReadyCallba
     private DatabaseReference landMarkReference;
     private DatabaseReference latitudeReference;
     private DatabaseReference longitudeReference;
+    private DatabaseReference descriptionReference;
+    private DatabaseReference historyReference;
+    private DatabaseReference triviaReference;
     private DatabaseReference nextReference;
+    private DatabaseReference imageReference;
     private DatabaseReference nextLocDatabaseReference;
     private DatabaseReference nextLocNameDatabaseReference;
 
     private double destinationLat;
     private double destinationLng;
     private String landmarkName;
+    private String landmarkDescription;
+    private String landmarkHistory;
+    private String landmarkTrivia;
     private String next;
+    private String image;
     private String nextLocName;
+
+    private AssetManager assetManager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -210,7 +226,7 @@ public class TourUniversity extends FragmentActivity implements OnMapReadyCallba
             }
         });
 
-        if(lastLocation.distanceTo(dest) <= 70) {
+        if(lastLocation.distanceTo(dest) <= 20) {
 
             //for Custom Dialog Box
             LayoutInflater layoutInflaterDialogBox = LayoutInflater.from(getApplicationContext());
@@ -218,8 +234,28 @@ public class TourUniversity extends FragmentActivity implements OnMapReadyCallba
             final android.support.v7.app.AlertDialog.Builder alertDialogBuilder = new android.support.v7.app.AlertDialog.Builder(TourUniversity.this);
             alertDialogBuilder.setView(view);
 
-            final ImageView imageDialog = (ImageView) view.findViewById(R.id.image_dialog);
-            imageDialog.setBackgroundResource(R.drawable.academic_monument);
+            assetManager = getAssets();
+
+            try {
+                InputStream inputStream = assetManager.open(image);
+                Bitmap bitmap = BitmapFactory.decodeStream(inputStream);
+
+                final ImageView imageDialog = (ImageView) view.findViewById(R.id.image_dialog);
+                imageDialog.setImageBitmap(bitmap);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+
+            final TextView textDialog = (TextView) view.findViewById(R.id.textView_dialog);
+            textDialog.setText("You are now at " + landmarkName);
+            final TextView descDialog = (TextView) view.findViewById(R.id.description_dialog);
+            descDialog.setText(landmarkDescription);
+            final TextView histHeaderDialog = (TextView) view.findViewById(R.id.hist_dialog_header);
+            final TextView histDialog = (TextView) view.findViewById(R.id.history_dialog);
+            histDialog.setText(landmarkHistory);
+            final TextView trivHeaderDialog = (TextView) view.findViewById(R.id.triv_dialog_header);
+            final TextView trivDialog = (TextView) view.findViewById(R.id.trivia_dialog);
+            trivDialog.setText(landmarkTrivia);
 
             alertDialogBuilder
                     .setCancelable(false)
@@ -232,10 +268,15 @@ public class TourUniversity extends FragmentActivity implements OnMapReadyCallba
                         }
                     })
 
-                    .setNegativeButton("Learn more", new DialogInterface.OnClickListener() {
+                    .setNegativeButton("", new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialogInterface, int i) {
                             //Do something
+                            Intent learnmore = new Intent(TourUniversity.this, LearnMoreActivity.class);
+                            learnmore.putExtra("Name", landmarkName);
+                            learnmore.putExtra("History", landmarkHistory);
+                            learnmore.putExtra("Trivia", landmarkTrivia);
+                            startActivity(learnmore);
                         }
                     });
 
@@ -407,6 +448,45 @@ public class TourUniversity extends FragmentActivity implements OnMapReadyCallba
             }
         });
 
+        descriptionReference = databaseReference.child("Description");
+        descriptionReference.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                landmarkDescription = dataSnapshot.getValue().toString();
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
+
+        historyReference = databaseReference.child("History");
+        historyReference.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                landmarkHistory = dataSnapshot.getValue().toString();
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
+
+        triviaReference = databaseReference.child("Trivia");
+        triviaReference.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                landmarkTrivia = dataSnapshot.getValue().toString();
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
+
         nextReference = databaseReference.child("Next");
         nextReference.addValueEventListener(new ValueEventListener() {
             @Override
@@ -419,6 +499,22 @@ public class TourUniversity extends FragmentActivity implements OnMapReadyCallba
 
             }
         });
+
+        imageReference = databaseReference.child("Image");
+        imageReference.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                image = dataSnapshot.getValue().toString();
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
+
+        dest.setLatitude(destinationLat);
+        dest.setLongitude(destinationLng);
     }
 
     public void getNextLocation(String nextLocation) {
@@ -463,6 +559,45 @@ public class TourUniversity extends FragmentActivity implements OnMapReadyCallba
             }
         });
 
+        descriptionReference = databaseReference.child("Description");
+        descriptionReference.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                landmarkDescription = dataSnapshot.getValue().toString();
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
+
+        historyReference = databaseReference.child("History");
+        historyReference.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                landmarkHistory = dataSnapshot.getValue().toString();
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
+
+        triviaReference = databaseReference.child("Trivia");
+        triviaReference.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                landmarkTrivia = dataSnapshot.getValue().toString();
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
+
         nextReference = databaseReference.child("Next");
         nextReference.addValueEventListener(new ValueEventListener() {
             @Override
@@ -475,6 +610,43 @@ public class TourUniversity extends FragmentActivity implements OnMapReadyCallba
 
             }
         });
+
+        imageReference = databaseReference.child("Image");
+        imageReference.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                image = dataSnapshot.getValue().toString();
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
+
+        dest.setLatitude(destinationLat);
+        dest.setLongitude(destinationLng);
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            checkLocationPermission();
+        }
+
+        //Check if Google Play Services Available or not
+        if (!CheckGooglePlayServices()) {
+            Log.d("onCreate", "Finishing test case since Google Play Services are not available");
+            finish();
+        } else {
+            Log.d("onCreate", "Google Play Services available.");
+        }
+
+        buildGoogleApiClient();
+
+        mMap.clear();
+
+        // Obtain the SupportMapFragment and get notified when the map is ready to be used.
+        SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
+                .findFragmentById(R.id.map);
+        mapFragment.getMapAsync(this);
     }
 
 
