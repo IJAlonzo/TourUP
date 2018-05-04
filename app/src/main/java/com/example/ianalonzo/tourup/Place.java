@@ -7,29 +7,19 @@ public class Place {
     String lng;
     String reference;
     String image;
-    String rating;
 
 
     public Place() {
 
     }
 
-    public Place(String name, String address, String lat, String lng, String reference, String image, String rating) {
+    public Place(String name, String address, String lat, String lng, String reference, String image) {
         this.name = name;
         this.address = address;
         this.lat = lat;
         this.lng = lng;
         this.reference = reference;
         this.image = image;
-        this.rating = rating;
-    }
-
-    public String getRating() {
-        return rating;
-    }
-
-    public void setRating(String rating) {
-        this.rating = rating;
     }
 
     public String getImage() {

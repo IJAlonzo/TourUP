@@ -208,7 +208,65 @@ public class TourUniversity extends FragmentActivity implements OnMapReadyCallba
         String distance = String.valueOf(lastLocation.distanceTo(dest));
         Toast.makeText(this, "You are " + distance + " meters away from " + landmarkName, Toast.LENGTH_SHORT).show();
 
-        if(lastLocation.distanceTo(dest) <= 20) {
+        if(lastLocation.distanceTo(dest) <= 20 && !next.equals("lnd_1")) {
+
+                //for Custom Dialog Box
+                LayoutInflater layoutInflaterDialogBox = LayoutInflater.from(getApplicationContext());
+                View view = layoutInflaterDialogBox.inflate(R.layout.custom_dialog, null, false);
+                final android.support.v7.app.AlertDialog.Builder alertDialogBuilder = new android.support.v7.app.AlertDialog.Builder(TourUniversity.this);
+                alertDialogBuilder.setView(view);
+
+                assetManager = getAssets();
+                Toast.makeText(this, "Image filename is " + image, Toast.LENGTH_SHORT).show();
+
+                try {
+                    InputStream inputStream = assetManager.open(image);
+                    Bitmap bitmap = BitmapFactory.decodeStream(inputStream);
+
+                    final ImageView imageDialog = (ImageView) view.findViewById(R.id.image_dialog);
+                    imageDialog.setImageBitmap(bitmap);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+
+                final TextView textDialog = (TextView) view.findViewById(R.id.textView_dialog);
+                textDialog.setText("You are now at " + landmarkName);
+                final TextView descDialog = (TextView) view.findViewById(R.id.description_dialog);
+                descDialog.setText(landmarkDescription);
+                final TextView histHeaderDialog = (TextView) view.findViewById(R.id.hist_dialog_header);
+                final TextView histDialog = (TextView) view.findViewById(R.id.history_dialog);
+                histDialog.setText(landmarkHistory);
+                final TextView trivHeaderDialog = (TextView) view.findViewById(R.id.triv_dialog_header);
+                final TextView trivDialog = (TextView) view.findViewById(R.id.trivia_dialog);
+                trivDialog.setText(landmarkTrivia);
+
+                //Initializes the data for the next location
+                getNextLocation(next);
+
+                alertDialogBuilder
+                        .setCancelable(false)
+                        .setPositiveButton("Go to the next location", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialogInterface, int i) {
+                                //Do something
+                                goToNextLocation();
+                            }
+                        })
+
+                        .setNegativeButton("", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialogInterface, int i) {
+                                //Do something
+                            }
+                        });
+
+
+                final android.support.v7.app.AlertDialog alertDialog = alertDialogBuilder.create();
+                alertDialog.show();
+
+                LocationServices.FusedLocationApi.removeLocationUpdates(client, this);
+
+        } else if (lastLocation.distanceTo(dest) <= 20 && next.equals("lnd_1")){
 
             //for Custom Dialog Box
             LayoutInflater layoutInflaterDialogBox = LayoutInflater.from(getApplicationContext());
@@ -242,11 +300,11 @@ public class TourUniversity extends FragmentActivity implements OnMapReadyCallba
 
             alertDialogBuilder
                     .setCancelable(false)
-                    .setPositiveButton("Go to the next location", new DialogInterface.OnClickListener() {
+                    .setPositiveButton("Finish tour", new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialogInterface, int i) {
                             //Do something
-                            getNextLocation(next);
+                            finish();
                         }
                     })
 
@@ -262,7 +320,6 @@ public class TourUniversity extends FragmentActivity implements OnMapReadyCallba
             alertDialog.show();
 
             LocationServices.FusedLocationApi.removeLocationUpdates(client, this);
-
         }
     }
      /**
@@ -598,7 +655,9 @@ public class TourUniversity extends FragmentActivity implements OnMapReadyCallba
 
             }
         });
+    }
 
+    public void goToNextLocation() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             checkLocationPermission();
         }

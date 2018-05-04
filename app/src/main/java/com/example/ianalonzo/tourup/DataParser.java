@@ -2,6 +2,9 @@ package com.example.ianalonzo.tourup;
 
 import android.util.Log;
 
+import com.google.android.gms.location.places.GeoDataClient;
+import com.google.android.gms.location.places.ui.PlacePicker;
+
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -58,7 +61,6 @@ public class DataParser {
         String longitude = "";
         String reference = "";
         String photoReference = "-NA-";
-        String rating = "";
 
         Log.d("getPlace", "Entered");
 
@@ -80,16 +82,12 @@ public class DataParser {
                 }
             }
 
-            if (!googlePlaceJson.isNull("rating")) {
-                rating = googlePlaceJson.getString("rating");
-            }
-
             StringBuilder imageUrl = new StringBuilder("https://maps.googleapis.com/maps/api/place/photo?");
             imageUrl.append("maxwidth=400");
             imageUrl.append("&photoreference=" + photoReference);
             imageUrl.append("&key=" + "AIzaSyCwM_MdK7PdouAX8SyfYAO8y0Foz2S9NZU");
 
-            googlePlace = new Place(placeName, address, latitude, longitude, reference, imageUrl.toString(), rating);
+            googlePlace = new Place(placeName, address, latitude, longitude, reference, imageUrl.toString());
 
             Log.d("getPlace", "Putting Places");
         } catch (JSONException e) {

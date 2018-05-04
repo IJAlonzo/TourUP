@@ -71,7 +71,6 @@ public class PlaceAdapter extends RecyclerView.Adapter<PlaceAdapter.TouristSpotV
         holder.textViewTitle.setText(place1.getName());
         holder.textViewDescription.setText(place1.getAddress());
         holder.textViewOpeningHour.setVisibility(View.GONE);
-        holder.ratingBar.setRating(Float.parseFloat(place1.getRating()));
         Picasso.get().load(place1.getImage()).into(holder.imageView);
 
         holder.showDirections.setOnClickListener(new View.OnClickListener() {
@@ -101,7 +100,6 @@ public class PlaceAdapter extends RecyclerView.Adapter<PlaceAdapter.TouristSpotV
     //Constructor for TouristSpotViewHolder
     class TouristSpotViewHolder extends RecyclerView.ViewHolder {
 
-        //ImageView imageView;
         TextView textViewTitle, textViewDescription, textViewOpeningHour;
         ImageView imageView;
         Button showDirections;
@@ -115,7 +113,6 @@ public class PlaceAdapter extends RecyclerView.Adapter<PlaceAdapter.TouristSpotV
             textViewDescription = itemView.findViewById(R.id.textViewDescription);
             textViewOpeningHour = itemView.findViewById(R.id.textViewOpeningHour);
             showDirections = itemView.findViewById(R.id.show_direction);
-            ratingBar = itemView.findViewById(R.id.ratingBar);
         }
     }
 
