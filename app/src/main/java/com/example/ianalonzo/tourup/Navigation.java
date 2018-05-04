@@ -45,11 +45,17 @@ public class Navigation extends AppCompatActivity
     private DatabaseReference landMarkReference;
     private DatabaseReference latitudeReference;
     private DatabaseReference longitudeReference;
+    private DatabaseReference historyReference;
+    private DatabaseReference triviaReference;
     private DatabaseReference nextReference;
+    private DatabaseReference imageReference;
     String landmarkName = "";
     double lat = 0.0;
     double lng = 0.0;
     String next = "";
+    String landmarkHistory;
+    String landmarkTrivia;
+    private String image;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -91,7 +97,7 @@ public class Navigation extends AppCompatActivity
         navigationView.setNavigationItemSelectedListener(this);
 
         //Instance of the database
-        databaseReference = FirebaseDatabase.getInstance().getReference().child("lnd_4");
+        databaseReference = FirebaseDatabase.getInstance().getReference().child("lnd_1");
         landMarkReference = databaseReference.child("Name");
         landMarkReference.addValueEventListener(new ValueEventListener() {
             @Override
@@ -144,6 +150,45 @@ public class Navigation extends AppCompatActivity
             }
         });
 
+        historyReference = databaseReference.child("History");
+        historyReference.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                landmarkHistory = dataSnapshot.getValue().toString();
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
+
+        triviaReference = databaseReference.child("Trivia");
+        triviaReference.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                landmarkTrivia = dataSnapshot.getValue().toString();
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
+
+        imageReference = databaseReference.child("Image");
+        imageReference.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                image = dataSnapshot.getValue().toString();
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
+
         Button btnStartTour = (Button) findViewById(R.id.btnStartTour);
         btnStartTour.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -153,6 +198,9 @@ public class Navigation extends AppCompatActivity
                 startTour.putExtra("Latitude", lat);
                 startTour.putExtra("Longitude", lng);
                 startTour.putExtra("Next Location", next);
+                startTour.putExtra("History", landmarkHistory);
+                startTour.putExtra("Trivia", landmarkTrivia);
+                startTour.putExtra("Image", image);
                 startActivity(startTour);
             }
         });

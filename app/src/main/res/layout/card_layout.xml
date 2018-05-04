@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     xmlns:app="http://schemas.android.com/apk/res-auto">
@@ -27,7 +28,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="250dp"
                     android:scaleType="centerCrop"
-                    android:contentDescription="image"
+                    android:contentDescription="@string/image"
                     android:id="@+id/imageView"/>
 
                 <LinearLayout
@@ -36,6 +37,15 @@
                     android:orientation="vertical"
                     android:padding="16dp"
                     android:background="#E0E0E0">
+
+                    <RatingBar
+                        android:id="@+id/ratingBar"
+                        style="@android:style/Widget.Material.RatingBar.Small"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:numStars="5"
+                        tools:ignore="NewApi"
+                        tools:targetApi="lollipop" />
 
                     <TextView
                         android:textSize="24sp"
@@ -73,7 +83,7 @@
                         android:minWidth="0dp"
                         android:paddingStart="8dp"
                         android:paddingEnd="8dp"
-                        android:text="Show Directions"
+                        android:text="@string/show_directions"
                         android:textColor="@color/colorPrimaryTextDefaultMaterialLight"
                         android:layout_gravity="bottom|right" />
 

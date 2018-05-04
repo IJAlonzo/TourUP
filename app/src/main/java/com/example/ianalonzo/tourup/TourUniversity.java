@@ -88,8 +88,6 @@ public class TourUniversity extends FragmentActivity implements OnMapReadyCallba
     private DatabaseReference triviaReference;
     private DatabaseReference nextReference;
     private DatabaseReference imageReference;
-    private DatabaseReference nextLocDatabaseReference;
-    private DatabaseReference nextLocNameDatabaseReference;
 
     private double destinationLat;
     private double destinationLng;
@@ -99,7 +97,6 @@ public class TourUniversity extends FragmentActivity implements OnMapReadyCallba
     private String landmarkTrivia;
     private String next;
     private String image;
-    private String nextLocName;
 
     private AssetManager assetManager;
 
@@ -211,21 +208,6 @@ public class TourUniversity extends FragmentActivity implements OnMapReadyCallba
         String distance = String.valueOf(lastLocation.distanceTo(dest));
         Toast.makeText(this, "You are " + distance + " meters away from " + landmarkName, Toast.LENGTH_SHORT).show();
 
-        //A database referencing to the next location
-        nextLocDatabaseReference = FirebaseDatabase.getInstance().getReference().child(next);
-        nextLocNameDatabaseReference = nextLocDatabaseReference.child("Name");
-        nextLocNameDatabaseReference.addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                nextLocName = dataSnapshot.getValue().toString();
-            }
-
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-
-            }
-        });
-
         if(lastLocation.distanceTo(dest) <= 20) {
 
             //for Custom Dialog Box
@@ -235,6 +217,7 @@ public class TourUniversity extends FragmentActivity implements OnMapReadyCallba
             alertDialogBuilder.setView(view);
 
             assetManager = getAssets();
+            Toast.makeText(this, "Image filename is " + image, Toast.LENGTH_SHORT).show();
 
             try {
                 InputStream inputStream = assetManager.open(image);
@@ -264,7 +247,6 @@ public class TourUniversity extends FragmentActivity implements OnMapReadyCallba
                         public void onClick(DialogInterface dialogInterface, int i) {
                             //Do something
                             getNextLocation(next);
-                            Toast.makeText(TourUniversity.this, "Next location is " + nextLocName, Toast.LENGTH_SHORT).show();
                         }
                     })
 
@@ -272,11 +254,6 @@ public class TourUniversity extends FragmentActivity implements OnMapReadyCallba
                         @Override
                         public void onClick(DialogInterface dialogInterface, int i) {
                             //Do something
-                            Intent learnmore = new Intent(TourUniversity.this, LearnMoreActivity.class);
-                            learnmore.putExtra("Name", landmarkName);
-                            learnmore.putExtra("History", landmarkHistory);
-                            learnmore.putExtra("Trivia", landmarkTrivia);
-                            startActivity(learnmore);
                         }
                     });
 
@@ -513,8 +490,6 @@ public class TourUniversity extends FragmentActivity implements OnMapReadyCallba
             }
         });
 
-        dest.setLatitude(destinationLat);
-        dest.setLongitude(destinationLng);
     }
 
     public void getNextLocation(String nextLocation) {
@@ -623,9 +598,6 @@ public class TourUniversity extends FragmentActivity implements OnMapReadyCallba
 
             }
         });
-
-        dest.setLatitude(destinationLat);
-        dest.setLongitude(destinationLng);
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             checkLocationPermission();

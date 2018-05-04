@@ -14,6 +14,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.RatingBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -70,6 +71,7 @@ public class PlaceAdapter extends RecyclerView.Adapter<PlaceAdapter.TouristSpotV
         holder.textViewTitle.setText(place1.getName());
         holder.textViewDescription.setText(place1.getAddress());
         holder.textViewOpeningHour.setVisibility(View.GONE);
+        holder.ratingBar.setRating(Float.parseFloat(place1.getRating()));
         Picasso.get().load(place1.getImage()).into(holder.imageView);
 
         holder.showDirections.setOnClickListener(new View.OnClickListener() {
@@ -103,6 +105,7 @@ public class PlaceAdapter extends RecyclerView.Adapter<PlaceAdapter.TouristSpotV
         TextView textViewTitle, textViewDescription, textViewOpeningHour;
         ImageView imageView;
         Button showDirections;
+        RatingBar ratingBar;
 
         public TouristSpotViewHolder(View itemView) {
             super(itemView);
@@ -112,6 +115,7 @@ public class PlaceAdapter extends RecyclerView.Adapter<PlaceAdapter.TouristSpotV
             textViewDescription = itemView.findViewById(R.id.textViewDescription);
             textViewOpeningHour = itemView.findViewById(R.id.textViewOpeningHour);
             showDirections = itemView.findViewById(R.id.show_direction);
+            ratingBar = itemView.findViewById(R.id.ratingBar);
         }
     }
 

@@ -55,7 +55,6 @@
         <activity
             android:name=".DirectionsActivity"
             android:label="@string/title_activity_directions" />
-        <activity android:name=".LearnMoreActivity"></activity>
     </application>
 
 </manifest>
