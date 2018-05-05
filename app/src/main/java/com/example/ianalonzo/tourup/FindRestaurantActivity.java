@@ -38,7 +38,7 @@ public class FindRestaurantActivity extends AppCompatActivity implements GetNear
         //googlePlacesUrl.append("&radius=" + PROXIMITY_RADIUS);
         //googlePlacesUrl.append("&type=" + nearbyPlace);
         //googlePlacesUrl.append("&sensor=true");
-        googlePlacesUrl.append("&key=" + "AIzaSyCwM_MdK7PdouAX8SyfYAO8y0Foz2S9NZU");
+        googlePlacesUrl.append("&key=" + "AIzaSyAedB_XHL2NJzYM9zsE72xFEiSlOTHMk28");
         Log.d("getUrl", googlePlacesUrl.toString());
         return (googlePlacesUrl.toString());
     }

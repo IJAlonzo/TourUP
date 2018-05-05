@@ -61,6 +61,7 @@ public class DataParser {
         String longitude = "";
         String reference = "";
         String photoReference = "-NA-";
+        String rating = "";
 
         Log.d("getPlace", "Entered");
 
@@ -85,9 +86,13 @@ public class DataParser {
             StringBuilder imageUrl = new StringBuilder("https://maps.googleapis.com/maps/api/place/photo?");
             imageUrl.append("maxwidth=400");
             imageUrl.append("&photoreference=" + photoReference);
-            imageUrl.append("&key=" + "AIzaSyCwM_MdK7PdouAX8SyfYAO8y0Foz2S9NZU");
+            imageUrl.append("&key=" + "AIzaSyAedB_XHL2NJzYM9zsE72xFEiSlOTHMk28");
 
-            googlePlace = new Place(placeName, address, latitude, longitude, reference, imageUrl.toString());
+            if(!googlePlaceJson.isNull("rating")) {
+                rating = googlePlaceJson.getString("rating");
+            }
+
+            googlePlace = new Place(placeName, address, latitude, longitude, reference, imageUrl.toString(), rating);
 
             Log.d("getPlace", "Putting Places");
         } catch (JSONException e) {

@@ -71,6 +71,11 @@ public class PlaceAdapter extends RecyclerView.Adapter<PlaceAdapter.TouristSpotV
         holder.textViewTitle.setText(place1.getName());
         holder.textViewDescription.setText(place1.getAddress());
         holder.textViewOpeningHour.setVisibility(View.GONE);
+        try {
+            holder.ratingBar.setRating(Float.parseFloat(place1.getRating()));
+        } catch (NumberFormatException ex) {
+            ex.printStackTrace();
+        }
         Picasso.get().load(place1.getImage()).into(holder.imageView);
 
         holder.showDirections.setOnClickListener(new View.OnClickListener() {
@@ -112,6 +117,7 @@ public class PlaceAdapter extends RecyclerView.Adapter<PlaceAdapter.TouristSpotV
             textViewTitle = itemView.findViewById(R.id.textViewName);
             textViewDescription = itemView.findViewById(R.id.textViewDescription);
             textViewOpeningHour = itemView.findViewById(R.id.textViewOpeningHour);
+            ratingBar = itemView.findViewById(R.id.ratingBar);
             showDirections = itemView.findViewById(R.id.show_direction);
         }
     }
