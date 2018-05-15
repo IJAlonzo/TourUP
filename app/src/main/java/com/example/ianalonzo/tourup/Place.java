@@ -8,13 +8,14 @@ public class Place {
     String reference;
     String image;
     String rating;
+    String open;
 
 
     public Place() {
 
     }
 
-    public Place(String name, String address, String lat, String lng, String reference, String image, String rating) {
+    public Place(String name, String address, String lat, String lng, String reference, String image, String rating, String open) {
         this.name = name;
         this.address = address;
         this.lat = lat;
@@ -22,6 +23,15 @@ public class Place {
         this.reference = reference;
         this.image = image;
         this.rating = rating;
+        this.open = open;
+    }
+
+    public String getOpen() {
+        return open;
+    }
+
+    public void setOpen(String open) {
+        this.open = open;
     }
 
     public String getRating() {

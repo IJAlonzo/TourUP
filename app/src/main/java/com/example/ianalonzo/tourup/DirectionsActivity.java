@@ -212,7 +212,7 @@ public class DirectionsActivity extends FragmentActivity implements OnMapReadyCa
                                 mMap.addMarker(new MarkerOptions().position(destination).title(extras.getString("placeName")).icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_ROSE)));
 
                                 List<Step> stepList = direction.getRouteList().get(0).getLegList().get(0).getStepList();
-                                ArrayList<PolylineOptions> polylineOptionList = DirectionConverter.createTransitPolyline(DirectionsActivity.this, stepList, 6, Color.LTGRAY, 3, Color.MAGENTA);
+                                ArrayList<PolylineOptions> polylineOptionList = DirectionConverter.createTransitPolyline(DirectionsActivity.this, stepList, 6, ContextCompat.getColor(DirectionsActivity.this, R.color.MaterialYellow), 3, Color.MAGENTA);
                                 for (PolylineOptions polylineOptions : polylineOptionList) {
                                     mMap.addPolyline(polylineOptions);
                                 }

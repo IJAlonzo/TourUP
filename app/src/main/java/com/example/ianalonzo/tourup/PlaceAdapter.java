@@ -7,6 +7,7 @@ package com.example.ianalonzo.tourup;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -70,12 +71,25 @@ public class PlaceAdapter extends RecyclerView.Adapter<PlaceAdapter.TouristSpotV
 
         holder.textViewTitle.setText(place1.getName());
         holder.textViewDescription.setText(place1.getAddress());
-        holder.textViewOpeningHour.setVisibility(View.GONE);
+        holder.textViewOpeningHour.setText("OPEN NOW: ");
         try {
+            holder.ratingBar.setStepSize(0.1f);
             holder.ratingBar.setRating(Float.parseFloat(place1.getRating()));
         } catch (NumberFormatException ex) {
             ex.printStackTrace();
         }
+
+        if(place1.getOpen().equals("true")) {
+            holder.nowOpen.setText("Yes");
+            holder.nowOpen.setTextColor(ContextCompat.getColor(mCtx, R.color.MaterialGreen));
+        } else if (place1.getOpen().equals("")){
+            holder.nowOpen.setText("Not Available");
+        } else {
+            holder.nowOpen.setText("No");
+            holder.nowOpen.setTextColor(ContextCompat.getColor(mCtx, R.color.MaterialRed));
+        }
+
+
         Picasso.get().load(place1.getImage()).into(holder.imageView);
 
         holder.showDirections.setOnClickListener(new View.OnClickListener() {
@@ -105,7 +119,7 @@ public class PlaceAdapter extends RecyclerView.Adapter<PlaceAdapter.TouristSpotV
     //Constructor for TouristSpotViewHolder
     class TouristSpotViewHolder extends RecyclerView.ViewHolder {
 
-        TextView textViewTitle, textViewDescription, textViewOpeningHour;
+        TextView textViewTitle, textViewDescription, textViewOpeningHour, nowOpen;
         ImageView imageView;
         Button showDirections;
         RatingBar ratingBar;
@@ -117,6 +131,7 @@ public class PlaceAdapter extends RecyclerView.Adapter<PlaceAdapter.TouristSpotV
             textViewTitle = itemView.findViewById(R.id.textViewName);
             textViewDescription = itemView.findViewById(R.id.textViewDescription);
             textViewOpeningHour = itemView.findViewById(R.id.textViewOpeningHour);
+            nowOpen = itemView.findViewById(R.id.now_open);
             ratingBar = itemView.findViewById(R.id.ratingBar);
             showDirections = itemView.findViewById(R.id.show_direction);
         }

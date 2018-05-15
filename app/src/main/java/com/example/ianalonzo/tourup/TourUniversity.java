@@ -5,12 +5,14 @@ import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.content.res.AssetFileDescriptor;
 import android.content.res.AssetManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.location.Location;
 
+import android.media.MediaPlayer;
 import android.os.Build;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -88,6 +90,7 @@ public class TourUniversity extends FragmentActivity implements OnMapReadyCallba
     private DatabaseReference triviaReference;
     private DatabaseReference nextReference;
     private DatabaseReference imageReference;
+    private DatabaseReference audioReference;
 
     private double destinationLat;
     private double destinationLng;
@@ -97,8 +100,11 @@ public class TourUniversity extends FragmentActivity implements OnMapReadyCallba
     private String landmarkTrivia;
     private String next;
     private String image;
+    private String audio;
 
     private AssetManager assetManager;
+    private AssetFileDescriptor assetFileDescriptor;
+    private MediaPlayer player;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -210,11 +216,21 @@ public class TourUniversity extends FragmentActivity implements OnMapReadyCallba
 
         if(lastLocation.distanceTo(dest) <= 20 && !next.equals("lnd_1")) {
 
-                //for Custom Dialog Box
+            //for Custom Dialog Box
                 LayoutInflater layoutInflaterDialogBox = LayoutInflater.from(getApplicationContext());
                 View view = layoutInflaterDialogBox.inflate(R.layout.custom_dialog, null, false);
                 final android.support.v7.app.AlertDialog.Builder alertDialogBuilder = new android.support.v7.app.AlertDialog.Builder(TourUniversity.this);
                 alertDialogBuilder.setView(view);
+
+                try {
+                    assetFileDescriptor = getAssets().openFd(audio);
+                    player = new MediaPlayer();
+                    player.setDataSource(assetFileDescriptor.getFileDescriptor(),assetFileDescriptor.getStartOffset(),assetFileDescriptor.getLength());
+                    player.prepare();
+                    player.start();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
 
                 assetManager = getAssets();
                 Toast.makeText(this, "Image filename is " + image, Toast.LENGTH_SHORT).show();
@@ -250,6 +266,7 @@ public class TourUniversity extends FragmentActivity implements OnMapReadyCallba
                             public void onClick(DialogInterface dialogInterface, int i) {
                                 //Do something
                                 goToNextLocation();
+                                player.stop();
                             }
                         })
 
@@ -376,7 +393,7 @@ public class TourUniversity extends FragmentActivity implements OnMapReadyCallba
                                 mMap.addMarker(new MarkerOptions().position(destination).icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_ROSE)));
 
                                 List<Step> stepList = direction.getRouteList().get(0).getLegList().get(0).getStepList();
-                                ArrayList<PolylineOptions> polylineOptionList = DirectionConverter.createTransitPolyline(TourUniversity.this, stepList, 10, Color.LTGRAY, 3, Color.MAGENTA);
+                                ArrayList<PolylineOptions> polylineOptionList = DirectionConverter.createTransitPolyline(TourUniversity.this, stepList, 10, ContextCompat.getColor(TourUniversity.this, R.color.MaterialYellow), 3, Color.MAGENTA);
                                 for (PolylineOptions polylineOptions : polylineOptionList) {
                                     mMap.addPolyline(polylineOptions);
                                 }
@@ -547,6 +564,19 @@ public class TourUniversity extends FragmentActivity implements OnMapReadyCallba
             }
         });
 
+        audioReference = databaseReference.child("Audio");
+        audioReference.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                audio = dataSnapshot.getValue().toString();
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
+
     }
 
     public void getNextLocation(String nextLocation) {
@@ -648,6 +678,19 @@ public class TourUniversity extends FragmentActivity implements OnMapReadyCallba
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 image = dataSnapshot.getValue().toString();
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
+
+        audioReference = databaseReference.child("Audio");
+        audioReference.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                audio = dataSnapshot.getValue().toString();
             }
 
             @Override

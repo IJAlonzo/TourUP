@@ -10,7 +10,8 @@
     tools:showIn="@layout/app_bar_navigation"
     android:orientation="vertical"
     android:padding="5dp"
-    app:layout_behavior="@string/appbar_scrolling_view_behavior">
+    app:layout_behavior="@string/appbar_scrolling_view_behavior"
+    android:background="@drawable/welcome">
 
     <!--this makes the appbar appear-->
     <!---->

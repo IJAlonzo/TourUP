@@ -62,6 +62,7 @@ public class DataParser {
         String reference = "";
         String photoReference = "-NA-";
         String rating = "";
+        String opening = "";
 
         Log.d("getPlace", "Entered");
 
@@ -92,7 +93,15 @@ public class DataParser {
                 rating = googlePlaceJson.getString("rating");
             }
 
-            googlePlace = new Place(placeName, address, latitude, longitude, reference, imageUrl.toString(), rating);
+            if(!googlePlaceJson.isNull("rating")) {
+                rating = googlePlaceJson.getString("rating");
+            }
+
+            if (googlePlaceJson.has("opening_hours")) {
+                opening = googlePlaceJson.getJSONObject("opening_hours").getString("open_now");
+            }
+
+            googlePlace = new Place(placeName, address, latitude, longitude, reference, imageUrl.toString(), rating, opening);
 
             Log.d("getPlace", "Putting Places");
         } catch (JSONException e) {
